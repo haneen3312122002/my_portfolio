@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/theme/text_styles.dart';
 import 'app_colors.dart';
 
 class AppTheme {
@@ -45,18 +46,22 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
 
-      // Text theme (اقل شي كبداية)
-      textTheme: base.textTheme.apply(
-        bodyColor: AppColors.body,
-        displayColor: AppColors.heading,
+      // Text theme
+      textTheme: TextTheme(
+        titleLarge: AppTextStyles.heroTitle,
+        titleMedium: AppTextStyles.title,
+        bodyLarge: AppTextStyles.body,
+        bodyMedium: AppTextStyles.body,
+        bodySmall: AppTextStyles.body,
       ),
 
       // Buttons (حتى الـ ElevatedButton يجي نفس الستايل تلقائي)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.heading,
-          foregroundColor: Colors.black, // عدليه حسب تصميمك
+          foregroundColor: AppColors.body, // عدليه حسب تصميمك
           disabledBackgroundColor: AppColors.disabled,
+          disabledForegroundColor: AppColors.body,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -67,8 +72,8 @@ class AppTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.heading,
-          side: const BorderSide(color: AppColors.heading),
+          foregroundColor: AppColors.body,
+          side: const BorderSide(color: AppColors.heading, width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -94,7 +99,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.heading, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.body, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),

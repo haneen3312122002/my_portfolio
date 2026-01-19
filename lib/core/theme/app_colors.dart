@@ -5,6 +5,8 @@ class AppColors {
 
   /// Main Headings
   static const Color heading = Color(0xFFB7DEEB);
+  //buttons:
+  static final Color button = Color(0xFF8AAAB6);
 
   /// Body text, icons, borders
   static const Color body = Color(0xFF82ABB8);
