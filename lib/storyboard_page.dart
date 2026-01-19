@@ -1,9 +1,11 @@
+import 'package:device_frame/device_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/shared/constants/images/images_paths.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/icon_button.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/outline_button.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/primary_button.dart';
 import 'package:my_portfolio/core/shared/widgets/common/scaffold.dart';
+import 'package:my_portfolio/core/shared/widgets/images/circle_image.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/title_text.dart';
@@ -148,6 +150,25 @@ class StoryboardPage extends StatelessWidget {
           const PrimaryButton(title: 'Disabled', onPressed: null),
 
           const SizedBox(height: 24),
+          GlowCircleImage(image: NetworkImage('https://picsum.photos/400')),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 260,
+            height: 520,
+            child: DeviceFrame(
+              device: Devices.android.samsungGalaxyS25,
+              screen: Image.asset(AppImages.backgroundImage, fit: BoxFit.cover),
+            ),
+          ),
+          SizedBox(
+            width: 260,
+            height: 520,
+            child: DeviceFrame(
+              device: Devices.ios.iPadPro13InchesM4,
+              orientation: Orientation.landscape,
+              screen: Image.asset(AppImages.backgroundImage, fit: BoxFit.cover),
+            ),
+          ),
         ],
       ),
     );
