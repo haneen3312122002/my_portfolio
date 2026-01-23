@@ -56,7 +56,7 @@ class StoryboardPage extends StatelessWidget {
                   isLoading: true,
                   onPressed: () {},
                 ),
-                OutlineButton(title: 'Outline', onPressed: () {}),
+                AppOutlineButton(title: 'Outline', onPressed: () {}),
                 AppIconButton(
                   icon: Icons.favorite_border,
                   tooltip: 'Like',
@@ -115,7 +115,7 @@ class StoryboardPage extends StatelessWidget {
                     children: [
                       PrimaryButton(title: 'Action', onPressed: () {}),
                       const SizedBox(width: 12),
-                      OutlineButton(title: 'Secondary', onPressed: () {}),
+                      AppOutlineButton(title: 'Secondary', onPressed: () {}),
                     ],
                   ),
                 ],

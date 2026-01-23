@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
-import 'package:my_portfolio/modules/profile/presentation/providers/profile_provider.dart';
+import 'package:my_portfolio/modules/profile/presentation/providers/profile_service_provider.dart';
 
-final profileProvider =
-    AsyncNotifierProvider.autoDispose<ProfileViewModel, ProfileEntity>(
-      ProfileViewModel.new,
-    );
+final profileProvider = AsyncNotifierProvider<ProfileViewModel, ProfileEntity>(
+  ProfileViewModel.new,
+);
 
 class ProfileViewModel extends AsyncNotifier<ProfileEntity> {
   Future<ProfileEntity> _fetchProfile() {
@@ -15,8 +14,11 @@ class ProfileViewModel extends AsyncNotifier<ProfileEntity> {
   }
 
   @override
-  Future<ProfileEntity> build() {
-    return _fetchProfile();
+  Future<ProfileEntity> build() async {
+    //return _fetchProfile();
+    final useCase = ref.read(profileUseCaseProvider);
+    final result = await useCase.getProfile();
+    return result;
   }
 
   Future<void> refresh() async {
@@ -30,7 +32,7 @@ class ProfileViewModel extends AsyncNotifier<ProfileEntity> {
     state = await AsyncValue.guard(() async {
       final useCase = ref.read(profileUseCaseProvider);
       await useCase.updateProfileFields(fields);
-      return _fetchProfile();
+      return await _fetchProfile();
     });
   }
 }

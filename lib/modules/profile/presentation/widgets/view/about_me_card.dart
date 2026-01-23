@@ -6,20 +6,20 @@ import 'package:my_portfolio/core/shared/widgets/lists/card.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/card_item.dart';
-
-final cardsProvider = StateProvider<int>((ref) => 0);
+import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
+import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 
 class AboutMeCard extends ConsumerWidget {
-  const AboutMeCard({super.key});
-
-  static const aboutSections = <CardItem>[
-    CardItem(title: 'about', content: 'hh'),
-    CardItem(title: 'education', content: 'edu'),
-    CardItem(title: 'skills', content: 'skills'),
-  ];
+  const AboutMeCard({super.key, required this.profile});
+  final ProfileEntity profile;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final aboutSections = <CardItem>[
+      CardItem(title: 'about', content: profile.about),
+      CardItem(title: 'education', content: profile.education),
+      CardItem(title: 'skills', content: profile.skills.join('\n')),
+    ];
     final index = ref.watch(cardsProvider);
     final item = aboutSections[index];
 

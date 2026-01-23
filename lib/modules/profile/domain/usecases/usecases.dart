@@ -1,3 +1,4 @@
+import 'package:cross_file/cross_file.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
 import 'package:my_portfolio/modules/profile/domain/repositories/profile_repositories.dart';
 
@@ -17,4 +18,6 @@ class ProfileUseCase {
   Future<void> updateProfileFields(Map<String, dynamic> fields) {
     return profileRepo.updateProfileFields(fields);
   }
+
+  Future<String?> uploadImage(XFile file) => profileRepo.uploadImage(file);
 }

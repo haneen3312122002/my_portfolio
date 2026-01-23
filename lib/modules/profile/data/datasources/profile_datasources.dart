@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:my_portfolio/modules/profile/data/models/profile_model.dart';
 
 class ProfileService {
@@ -12,29 +14,32 @@ class ProfileService {
   static const _docId = 'main';
 
   Future<ProfileModel> getProfile() async {
-    final ref = _firestore.collection(_collection).doc(_docId);
-    final doc = await ref.get();
+    print('GET PROFILE: start');
 
-    if (!doc.exists) {
-      final emptyProfile = ProfileModel(
-        id: _docId,
-        name: '',
-        email: '',
-        phone: '',
-        title: '',
-        about: '',
-        image: '',
-        github: '',
-        linkedin: '',
-        education: '',
-        skills: [],
-      );
+    final docRef = _firestore.collection(_collection).doc(_docId);
 
-      await ref.set(emptyProfile.toDocument());
-      return emptyProfile;
+    try {
+      print('GET PROFILE: before get');
+      final doc = await docRef.get().timeout(const Duration(seconds: 8));
+      print('GET PROFILE: after get exists=${doc.exists}');
+
+      if (!doc.exists) {
+        print('GET PROFILE: creating empty');
+        final emptyProfile = ProfileModel(id: _docId);
+
+        await docRef.set(emptyProfile.toDocument());
+        print('GET PROFILE: created');
+
+        return emptyProfile;
+      }
+
+      print('GET PROFILE: returning model');
+      return ProfileModel.fromDocument(doc);
+    } catch (e, st) {
+      print('GET PROFILE: ERROR $e');
+      print(st);
+      rethrow;
     }
-
-    return ProfileModel.fromDocument(doc);
   }
 
   Future<void> upsertProfile(ProfileModel profile) async {
@@ -48,5 +53,28 @@ class ProfileService {
     if (fields.isEmpty) return;
 
     await _firestore.collection(_collection).doc(_docId).update(fields);
+  }
+
+  //upload image to storage
+  Future<String?> uploadImage(XFile file) async {
+    print('..........enter');
+    try {
+      final response = _storage
+          .ref()
+          .child('profile_images')
+          .child('profile_photo.jpg');
+      //upload photo
+      final bytes = await file.readAsBytes();
+      await response.putData(bytes);
+      //get download url
+      final url = await response.getDownloadURL();
+      //put in profile:
+      await updateProfileFields({'image': url});
+      return url;
+    } catch (e, st) {
+      debugPrint('UPLOAD IMAGE ERROR: $e');
+      debugPrintStack(stackTrace: st);
+      return null;
+    }
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/core/app/layouts/responsive_layout.dart';
 import 'package:my_portfolio/core/theme/app_theme.dart';
 import 'package:my_portfolio/firebase_options.dart';
-import 'package:my_portfolio/modules/profile/presentation/screens/home_screen.dart';
+import 'package:my_portfolio/modules/profile/presentation/screens/home_screen_view.dart';
 import 'package:my_portfolio/storyboard_page.dart';
 
 void main() async {

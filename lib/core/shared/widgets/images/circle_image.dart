@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/core/theme/app_colors.dart';
 
 class GlowCircleImage extends StatelessWidget {
   final String image; // asset أو url
@@ -16,14 +15,17 @@ class GlowCircleImage extends StatelessWidget {
   });
 
   ImageProvider _resolveImage(String path) {
-    if (path.startsWith('http')) {
-      return NetworkImage(path);
+    final p = path.trim();
+    if (p.startsWith('http')) {
+      return NetworkImage(p);
     }
-    return AssetImage(path);
+    return AssetImage(p);
   }
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = image.trim().isNotEmpty;
+
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -54,7 +56,15 @@ class GlowCircleImage extends StatelessWidget {
             color: Colors.white,
           ),
           child: ClipOval(
-            child: Image(image: _resolveImage(image), fit: BoxFit.cover),
+            child: image.trim().startsWith('http')
+                ? Image.network(
+                    image.trim(),
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                    errorBuilder: (_, e, __) =>
+                        Center(child: Text('Image error: $e')),
+                  )
+                : Image.asset(image.trim(), fit: BoxFit.cover),
           ),
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:cross_file/cross_file.dart';
 import 'package:my_portfolio/modules/profile/data/datasources/profile_datasources.dart';
 import 'package:my_portfolio/modules/profile/data/models/profile_model.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
@@ -23,5 +24,10 @@ class ProfileRepoImpl implements ProfileRepo {
   @override
   Future<void> updateProfileFields(Map<String, dynamic> fields) {
     return _service.updateProfileFields(fields);
+  }
+
+  @override
+  Future<String?> uploadImage(XFile file) {
+    return _service.uploadImage(file);
   }
 }
