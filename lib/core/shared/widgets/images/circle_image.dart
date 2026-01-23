@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/theme/app_colors.dart';
 
 class GlowCircleImage extends StatelessWidget {
-  final ImageProvider image;
+  final String image; // asset أو url
   final double size;
   final Color glowColor;
   final double borderWidth;
@@ -10,10 +10,17 @@ class GlowCircleImage extends StatelessWidget {
   const GlowCircleImage({
     super.key,
     required this.image,
-    this.size = 200,
+    this.size = 500,
     this.glowColor = const Color(0xFFB9FF6A),
     this.borderWidth = 6,
   });
+
+  ImageProvider _resolveImage(String path) {
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return AssetImage(path);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +29,17 @@ class GlowCircleImage extends StatelessWidget {
       children: [
         // glow
         Container(
-          width: size * 1.7,
-          height: size * 1.7,
+          width: size * 1.4,
+          height: size * 1.4,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
               colors: [
-                AppColors.disabled,
-                AppColors.heading,
-
+                glowColor.withOpacity(0.6),
+                glowColor.withOpacity(0.25),
                 Colors.transparent,
               ],
-              stops: const [0.0, 0.5, 1.0],
+              stops: const [0.0, 0.6, 1.0],
             ),
           ),
         ),
@@ -48,7 +54,7 @@ class GlowCircleImage extends StatelessWidget {
             color: Colors.white,
           ),
           child: ClipOval(
-            child: Image(image: image, fit: BoxFit.cover),
+            child: Image(image: _resolveImage(image), fit: BoxFit.cover),
           ),
         ),
       ],

@@ -150,7 +150,7 @@ class StoryboardPage extends StatelessWidget {
           const PrimaryButton(title: 'Disabled', onPressed: null),
 
           const SizedBox(height: 24),
-          GlowCircleImage(image: NetworkImage('https://picsum.photos/400')),
+          GlowCircleImage(image: AppImages.backgroundImage),
           const SizedBox(height: 24),
           SizedBox(
             width: 260,
