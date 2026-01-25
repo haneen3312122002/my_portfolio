@@ -9,7 +9,7 @@ class AppTheme {
     final base = ThemeData.light(useMaterial3: true);
 
     final colorScheme = base.colorScheme.copyWith(
-      primary: AppColors.heading, // أو اختاري لون primary فعلي لو عندك
+      primary: AppColors.heading,
       secondary: AppColors.body,
       surface: AppColors.card,
     );
@@ -19,19 +19,19 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.scaffold,
 
       // Divider
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: AppColors.divider,
         thickness: 1,
         space: 1,
       ),
 
       // AppBar
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.scaffold,
         elevation: 0,
         centerTitle: false,
-        iconTheme: const IconThemeData(color: AppColors.body),
-        titleTextStyle: const TextStyle(
+        iconTheme: IconThemeData(color: AppColors.body),
+        titleTextStyle: TextStyle(
           color: AppColors.heading,
           fontSize: 18,
           fontWeight: FontWeight.w700,
@@ -55,11 +55,11 @@ class AppTheme {
         bodySmall: AppTextStyles.body,
       ),
 
-      // Buttons (حتى الـ ElevatedButton يجي نفس الستايل تلقائي)
+      // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.heading,
-          foregroundColor: AppColors.body, // عدليه حسب تصميمك
+          foregroundColor: AppColors.body,
           disabledBackgroundColor: AppColors.disabled,
           disabledForegroundColor: AppColors.body,
           shape: RoundedRectangleBorder(
@@ -70,6 +70,7 @@ class AppTheme {
         ),
       ),
 
+      // OutlinedButton
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.body,
@@ -81,9 +82,51 @@ class AppTheme {
         ),
       ),
 
+      // IconButton
       iconButtonTheme: IconButtonThemeData(
         style: ButtonStyle(
           foregroundColor: WidgetStateProperty.all(AppColors.body),
+        ),
+      ),
+
+      // ✅ Buttons used inside dialogs (TextButton / FilledButton)
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.body,
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.heading,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          textStyle: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ),
+
+      // ✅ Dialogs Theme
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.card,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: const BorderSide(color: AppColors.divider, width: 1),
+        ),
+        titleTextStyle: const TextStyle(
+          color: AppColors.heading,
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+        ),
+        contentTextStyle: const TextStyle(
+          color: AppColors.body,
+          fontSize: 14.5,
+          height: 1.35,
         ),
       ),
 

@@ -77,4 +77,56 @@ class ProfileService {
       return null;
     }
   }
+
+  //
+  Future<String> uploadSocialIcon({
+    required Uint8List bytes,
+    required String originalFileName,
+    String profileId = 'main',
+  }) async {
+    print('enter the method');
+    final safeName = originalFileName.replaceAll(RegExp(r'\s+'), '_');
+    final fileName = 'icon_${DateTime.now().millisecondsSinceEpoch}_$safeName';
+
+    final ref = _storage
+        .ref()
+        .child('social_icons')
+        .child(profileId)
+        .child(fileName);
+    print('...............before put');
+    print('bytes length = ${bytes.length}');
+    print('fileName = $originalFileName');
+
+    final task = ref.putData(
+      bytes,
+      SettableMetadata(
+        cacheControl: 'public,max-age=31536000',
+        contentType: 'image/jpeg', // جرّبي png حسب الملف
+      ),
+    );
+
+    // يطبع progress/state
+    task.snapshotEvents.listen(
+      (s) {
+        print('state=${s.state}  ${s.bytesTransferred}/${s.totalBytes}');
+      },
+      onError: (e) {
+        print('snapshotEvents ERROR: $e');
+      },
+    );
+
+    try {
+      // timeout عشان لو علّق ما يضل واقف للأبد
+      final snap = await task.timeout(const Duration(seconds: 25));
+      print('...............after put state=${snap.state}');
+
+      final url = await ref.getDownloadURL();
+      print('downloadUrl=$url');
+      return url;
+    } catch (e, st) {
+      print('UPLOAD ERROR: $e');
+      print(st);
+      rethrow;
+    }
+  }
 }

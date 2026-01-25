@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cross_file/cross_file.dart';
 import 'package:my_portfolio/modules/profile/data/datasources/profile_datasources.dart';
 import 'package:my_portfolio/modules/profile/data/models/profile_model.dart';
@@ -29,5 +31,16 @@ class ProfileRepoImpl implements ProfileRepo {
   @override
   Future<String?> uploadImage(XFile file) {
     return _service.uploadImage(file);
+  }
+
+  @override
+  Future<String> uploadSocialIcon({
+    required Uint8List bytes,
+    required String originalFileName,
+  }) {
+    return _service.uploadSocialIcon(
+      bytes: bytes,
+      originalFileName: originalFileName,
+    );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cross_file/cross_file.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
 import 'package:my_portfolio/modules/profile/domain/repositories/profile_repositories.dart';
@@ -20,4 +22,11 @@ class ProfileUseCase {
   }
 
   Future<String?> uploadImage(XFile file) => profileRepo.uploadImage(file);
+  Future<String> uploadSocialIcon({
+    required Uint8List bytes,
+    required String originalFileName,
+  }) => profileRepo.uploadSocialIcon(
+    bytes: bytes,
+    originalFileName: originalFileName,
+  );
 }

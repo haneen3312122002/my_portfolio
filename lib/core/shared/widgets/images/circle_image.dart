@@ -1,44 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/theme/app_colors.dart';
 
 class GlowCircleImage extends StatelessWidget {
-  final String image; // asset أو url
+  final String image;
   final double size;
-  final Color glowColor;
+  final Color? glowColor; // اختياري
   final double borderWidth;
 
   const GlowCircleImage({
     super.key,
     required this.image,
-    this.size = 500,
-    this.glowColor = const Color(0xFFB9FF6A),
-    this.borderWidth = 6,
+    this.size = 200,
+    this.glowColor,
+    this.borderWidth = 5,
   });
-
-  ImageProvider _resolveImage(String path) {
-    final p = path.trim();
-    if (p.startsWith('http')) {
-      return NetworkImage(p);
-    }
-    return AssetImage(p);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = image.trim().isNotEmpty;
+    final Color baseGlow = glowColor ?? AppColors.heading;
 
     return Stack(
       alignment: Alignment.center,
       children: [
-        // glow
+        // 🔥 Glow خارجي قوي (Neon)
         Container(
-          width: size * 1.4,
-          height: size * 1.4,
+          width: size * 1.2,
+          height: size * 1.2,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: baseGlow.withOpacity(0.75),
+                blurRadius: 90,
+                spreadRadius: 25,
+              ),
+              BoxShadow(
+                color: baseGlow.withOpacity(0.45),
+                blurRadius: 150,
+                spreadRadius: 45,
+              ),
+            ],
+          ),
+        ),
+
+        // ✨ Glow ناعم قريب من الصورة
+        Container(
+          width: size * 1.15,
+          height: size * 1.15,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
               colors: [
-                glowColor.withOpacity(0.6),
-                glowColor.withOpacity(0.25),
+                baseGlow.withOpacity(0.85),
+                baseGlow.withOpacity(0.35),
                 Colors.transparent,
               ],
               stops: const [0.0, 0.6, 1.0],
@@ -46,25 +60,26 @@ class GlowCircleImage extends StatelessWidget {
           ),
         ),
 
-        // image container
+        // 🖼️ الصورة
         Container(
           width: size,
           height: size,
           padding: EdgeInsets.all(borderWidth),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white,
+            color: Colors.black, // يبرز النيون
+            boxShadow: [
+              BoxShadow(
+                color: baseGlow.withOpacity(0.9),
+                blurRadius: 30,
+                spreadRadius: 4,
+              ),
+            ],
           ),
           child: ClipOval(
-            child: image.trim().startsWith('http')
-                ? Image.network(
-                    image.trim(),
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
-                    errorBuilder: (_, e, __) =>
-                        Center(child: Text('Image error: $e')),
-                  )
-                : Image.asset(image.trim(), fit: BoxFit.cover),
+            child: image.startsWith('http')
+                ? Image.network(image, fit: BoxFit.cover)
+                : Image.asset(image, fit: BoxFit.cover),
           ),
         ),
       ],

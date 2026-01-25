@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:my_portfolio/core/shared/widgets/animations/switcher.dart';
+import 'package:my_portfolio/core/shared/widgets/cards/ship.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/card.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
@@ -29,7 +30,9 @@ class AboutMeCard extends ConsumerWidget {
         title: AppSubtitle(item.title),
         onNext: () => ref.read(cardsProvider.notifier).state =
             (index + 1) % aboutSections.length,
-        child: AppBodyText(item.content, softWrap: true),
+        child: index == 2
+            ? SkillsChips(skills: profile.skills)
+            : AppBodyText(item.content, softWrap: true),
       ),
     );
   }

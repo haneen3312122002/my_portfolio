@@ -67,7 +67,9 @@ class ProfileSection extends ConsumerWidget {
                     ref.read(profileDraftProvider.notifier).state = draft;
                   },
                 )
-              : AppTitle(profile.name),
+              : Center(
+                  child: AppTitle(profile.name, textAlign: TextAlign.center),
+                ),
         ],
       ),
     );
