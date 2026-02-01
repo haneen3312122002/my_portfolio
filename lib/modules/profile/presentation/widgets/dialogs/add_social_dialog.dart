@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/core/shared/errors/error_mapper.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/outline_button.dart';
-import 'package:my_portfolio/modules/profile/helpers/image_picker.dart';
+import 'package:my_portfolio/core/helpers/image_picker.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 import 'package:my_portfolio/modules/profile/presentation/viewmodles/social_image_viewmodel.dart';
 

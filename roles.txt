@@ -1,0 +1,23 @@
+-role 1: 
+any thimg returned from json = list<dynamic>
+so for example:
+json['int'] = json[dynamic]
+so json -> dart:
+json['int'] as list<dynamic?>
+if we have list: use the map
+?.map()
+example:
+"skills": {
+  "mobile": ["Flutter", "Dart"],
+  "security": ["OWASP", "CTF"]
+}
+step1:
+skills: (json['skills] as list<dynamic?>)
+skills[
+    "mobile": ["Flutter", "Dart"],
+    "security": ["OWASP", "CTF"]
+]
+step2:
+?.map(e=>e.frommap(e).tolist)
+skills[obj1,obj2...]
+

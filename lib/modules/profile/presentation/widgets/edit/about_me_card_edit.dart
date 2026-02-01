@@ -5,7 +5,7 @@ import 'package:my_portfolio/core/shared/widgets/animations/switcher.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/card.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
-import 'package:my_portfolio/modules/profile/helpers/image_picker.dart';
+import 'package:my_portfolio/core/helpers/image_picker.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 
 class CardControllerArgs {
