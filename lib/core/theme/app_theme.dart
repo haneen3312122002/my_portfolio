@@ -26,16 +26,12 @@ class AppTheme {
       ),
 
       // AppBar
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.scaffold,
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.body),
-        titleTextStyle: TextStyle(
-          color: AppColors.heading,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.body),
+        titleTextStyle: AppTextStyles.title.copyWith(fontSize: 18),
       ),
 
       // Card
@@ -48,18 +44,24 @@ class AppTheme {
 
       // Text theme
       textTheme: TextTheme(
-        titleLarge: AppTextStyles.heroTitle,
-        titleMedium: AppTextStyles.title,
+        headlineLarge: AppTextStyles.heroTitle,
+        headlineMedium: AppTextStyles.heroTitle.copyWith(fontSize: 36),
+        headlineSmall: AppTextStyles.title.copyWith(fontSize: 26),
+
+        titleLarge: AppTextStyles.title.copyWith(fontSize: 22),
+        titleMedium: AppTextStyles.subtitle.copyWith(fontSize: 18),
+        titleSmall: AppTextStyles.title.copyWith(fontSize: 16),
+        displayLarge: AppTextStyles.displayLarge,
         bodyLarge: AppTextStyles.body,
         bodyMedium: AppTextStyles.body,
-        bodySmall: AppTextStyles.body,
+        bodySmall: AppTextStyles.body.copyWith(fontSize: 14),
       ),
 
       // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.heading,
-          foregroundColor: AppColors.body,
+          backgroundColor: AppColors.body,
+          foregroundColor: AppColors.heading,
           disabledBackgroundColor: AppColors.disabled,
           disabledForegroundColor: AppColors.body,
           shape: RoundedRectangleBorder(
@@ -74,7 +76,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.body,
-          side: const BorderSide(color: AppColors.heading, width: 2),
+          side: const BorderSide(color: AppColors.primaryPurple, width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -118,13 +120,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(18),
           side: const BorderSide(color: AppColors.divider, width: 1),
         ),
-        titleTextStyle: const TextStyle(
-          color: AppColors.heading,
-          fontSize: 18,
-          fontWeight: FontWeight.w800,
-        ),
-        contentTextStyle: const TextStyle(
-          color: AppColors.body,
+        titleTextStyle: AppTextStyles.title.copyWith(fontSize: 18),
+        contentTextStyle: AppTextStyles.body.copyWith(
           fontSize: 14.5,
           height: 1.35,
         ),

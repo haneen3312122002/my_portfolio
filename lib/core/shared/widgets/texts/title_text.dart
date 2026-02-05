@@ -18,7 +18,7 @@ class AppTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.titleLarge;
+    final style = Theme.of(context).textTheme.displayLarge;
 
     return Text(
       text,

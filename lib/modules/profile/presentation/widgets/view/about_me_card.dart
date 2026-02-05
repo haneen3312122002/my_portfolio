@@ -1,39 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import 'package:my_portfolio/core/shared/widgets/animations/switcher.dart';
-import 'package:my_portfolio/core/shared/widgets/cards/ship.dart';
+
+import 'package:my_portfolio/core/shared/widgets/images/circle_image.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/card.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
-import 'package:my_portfolio/modules/profile/domain/entites/card_item.dart';
+import 'package:my_portfolio/core/shared/widgets/texts/title_text.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/profile_entity.dart';
-import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 
 class AboutMeCard extends ConsumerWidget {
   const AboutMeCard({super.key, required this.profile});
+
   final ProfileEntity profile;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aboutSections = <CardItem>[
-      CardItem(title: 'about', content: profile.about),
-      CardItem(title: 'education', content: profile.education),
-      CardItem(title: 'skills', content: profile.skills.join('\n')),
-    ];
-    final index = ref.watch(cardsProvider);
-    final item = aboutSections[index];
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // ===== PROFILE IMAGE =====
+        GlowCircleImage(image: profile.image, size: 140),
 
-    return SlideFadeSwitcher(
-      switchKey: ValueKey(item),
-      child: AppCard(
-        title: AppSubtitle(item.title),
-        onNext: () => ref.read(cardsProvider.notifier).state =
-            (index + 1) % aboutSections.length,
-        child: index == 2
-            ? SkillsChips(skills: profile.skills)
-            : AppBodyText(item.content, softWrap: true),
-      ),
+        const SizedBox(height: 24),
+
+        // ===== TITLE =====
+        const AppSubtitle('Flutter Developer', textAlign: TextAlign.center),
+
+        const SizedBox(height: 16),
+
+        // ===== ABOUT TEXT =====
+        AppBodyText(profile.about, textAlign: TextAlign.center, softWrap: true),
+      ],
     );
   }
 }

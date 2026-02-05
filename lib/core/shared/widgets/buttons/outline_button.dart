@@ -3,26 +3,24 @@ import 'package:flutter/material.dart';
 class AppOutlineButton extends StatelessWidget {
   const AppOutlineButton({
     super.key,
-    required this.title,
+    this.child,
+    this.title,
     required this.onPressed,
     this.icon,
   });
 
-  final String title;
+  final String? title;
   final VoidCallback? onPressed;
   final IconData? icon;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
+      style: ElevatedButton.styleFrom(maximumSize: Size(200, 40)),
+
       onPressed: onPressed,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 8)],
-          Text(title),
-        ],
-      ),
+      child: child,
     );
   }
 }

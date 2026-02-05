@@ -22,8 +22,16 @@ class AppColors {
   /// States
   static const Color divider = Color(0x448DB8C6);
   static const Color disabled = Color(0x668DB8C6);
+  static const Color primaryPurple = Color.fromARGB(255, 124, 122, 255);
+
+  static const Color primaryBlue = Color.fromARGB(255, 184, 31, 255);
 
   /// 🔥 Glow / Neon helpers
   static const Color glowSoft = Color(0x80BFE8F4);
   static const Color glowStrong = Color(0xCCBFE8F4);
+  static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [primaryPurple, primaryBlue],
+  );
 }

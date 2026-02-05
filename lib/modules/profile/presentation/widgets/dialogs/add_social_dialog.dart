@@ -43,18 +43,18 @@ class AddSocialLinkDialog extends ConsumerWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              AppOutlineButton(
-                title: 'add icon',
-                onPressed: isLoading
-                    ? null
-                    : () async {
-                        final PickedImageResult? res = await pickImage();
-                        if (res != null) {
-                          setDraft(ref, 'social_icon_name', res.name);
-                          setDraft(ref, 'social_icon_bytes', res.bytes);
-                        }
-                      },
-              ),
+              // AppOutlineButton(
+              //   title: 'Pick Icon',
+              //   onPressed: isLoading
+              //       ? null
+              //       : () async {
+              //           final PickedImageResult? res = await pickImage();
+              //           if (res != null) {
+              //             setDraft(ref, 'social_icon_name', res.name);
+              //             setDraft(ref, 'social_icon_bytes', res.bytes);
+              //           }
+              //         },
+              // ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(

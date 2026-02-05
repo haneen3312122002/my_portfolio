@@ -48,6 +48,9 @@ dependencies:
   cross_file: ^0.3.5+1
   url_launcher: ^6.3.2
   file_picker: ^10.3.8
+  google_fonts: ^8.0.0
+  font_awesome_flutter: ^10.12.0
+  animated_text_kit: ^4.3.0
 
 dev_dependencies:
   flutter_test:
@@ -74,7 +77,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/background.png
+    - assets/background.jpg
+    - assets/title_container_image.png
+    - assets/star.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

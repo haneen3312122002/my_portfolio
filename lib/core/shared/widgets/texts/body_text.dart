@@ -8,19 +8,19 @@ class AppBodyText extends StatelessWidget {
     this.maxLines,
     this.overflow,
     this.softWrap,
+    this.wstyle,
   });
 
   final String text;
+  final TextStyle? wstyle;
   final TextAlign? textAlign;
   final int? maxLines;
-  //if no place for the text: ellipsis / fade
   final TextOverflow? overflow;
-  //new text line if needed:
   final bool? softWrap;
 
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.bodyMedium;
+    final style = wstyle ?? Theme.of(context).textTheme.bodyMedium;
 
     return Text(
       text,
