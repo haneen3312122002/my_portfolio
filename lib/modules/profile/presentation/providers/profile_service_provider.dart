@@ -3,7 +3,7 @@ import 'package:my_portfolio/core/infrastructure/firebase/firebase_providers.dar
 import 'package:my_portfolio/modules/profile/data/datasources/profile_datasources.dart';
 import 'package:my_portfolio/modules/profile/data/repositories/profile_repositories.dart';
 import 'package:my_portfolio/modules/profile/domain/repositories/profile_repositories.dart';
-import 'package:my_portfolio/modules/profile/domain/usecases/usecases.dart';
+import 'package:my_portfolio/modules/profile/domain/usecases/profile_usecases.dart';
 
 final profileServiceProvider = Provider<ProfileService>((ref) {
   final firestore = ref.watch(firebaseFirestoreProvider);

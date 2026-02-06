@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/social_icon_button.dart';
-import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile_viewmodle.dart';
+import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/profile_viewmodle.dart';
 
 class SocialSection extends ConsumerWidget {
   final double iconSize;

@@ -6,12 +6,12 @@ import 'package:my_portfolio/core/shared/widgets/buttons/icon_button.dart';
 import 'package:my_portfolio/core/shared/widgets/common/scaffold.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
-import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile_viewmodle.dart';
-import 'package:my_portfolio/modules/profile/presentation/viewmodles/social_image_viewmodel.dart';
+import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/profile_viewmodle.dart';
+import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/social_image_viewmodel.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/dialogs/add_social_dialog.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/mode_switcher.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/profile_section/profile_section.dart';
-import 'package:my_portfolio/modules/profile/presentation/widgets/skills.dart';
+import 'package:my_portfolio/modules/profile/presentation/widgets/skills_section/skills.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/social_skills_section.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/view/about_me_card.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/edit/about_me_card_edit.dart';
@@ -39,6 +39,7 @@ class HomePage extends ConsumerWidget {
                     vertical: 32,
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // ================= LEFT SECTION =================

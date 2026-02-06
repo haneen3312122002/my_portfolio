@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/profile_service_provider.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
-import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile_viewmodle.dart';
+import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/profile_viewmodle.dart';
 
 final socialIconUploadProvider =
     AsyncNotifierProvider<SocialIconUploadViewModel, void>(

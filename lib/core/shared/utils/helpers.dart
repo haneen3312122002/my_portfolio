@@ -22,3 +22,18 @@ Future<void> openLinkSmart(String url) async {
     debugPrint('Could not launch $url');
   }
 }
+//...
+
+Color mycolorFromHex(String hex) {
+  var h = hex.replaceAll('#', '').trim();
+  if (h.length == 6) h = 'FF$h'; // alpha
+  return Color(int.parse(h, radix: 16));
+}
+
+String myhexFromColor(Color c) {
+  final a = c.alpha.toRadixString(16).padLeft(2, '0');
+  final r = c.red.toRadixString(16).padLeft(2, '0');
+  final g = c.green.toRadixString(16).padLeft(2, '0');
+  final b = c.blue.toRadixString(16).padLeft(2, '0');
+  return '#${(a + r + g + b).toUpperCase()}';
+}

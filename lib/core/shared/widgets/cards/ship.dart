@@ -6,9 +6,13 @@ class SkillsChips extends StatelessWidget {
   final double spacing;
   final double runSpacing;
 
+  /// ✅ لون الشيبس
+  final Color chipColor;
+
   const SkillsChips({
     super.key,
     required this.skills,
+    required this.chipColor,
     this.spacing = 10,
     this.runSpacing = 10,
   });
@@ -19,33 +23,35 @@ class SkillsChips extends StatelessWidget {
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
-
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Wrap(
       spacing: spacing,
       runSpacing: runSpacing,
-      children: items.map((skill) => _SkillChip(label: skill)).toList(),
+      children: items
+          .map((skill) => _SkillChip(label: skill, color: chipColor))
+          .toList(),
     );
   }
 }
 
 class _SkillChip extends StatelessWidget {
   final String label;
+  final Color color;
 
-  const _SkillChip({required this.label});
+  const _SkillChip({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.card, // خلفية الكارد الشفافة
+        color: color.withOpacity(0.10),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: color.withOpacity(0.55)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.heading.withOpacity(0.14), // glow خفيف
+            color: color.withOpacity(0.18),
             blurRadius: 14,
             spreadRadius: 1,
           ),
@@ -53,8 +59,8 @@ class _SkillChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: AppColors.body,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.92),
           fontWeight: FontWeight.w700,
           fontSize: 13.5,
         ),

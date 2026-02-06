@@ -4,7 +4,7 @@ import 'package:my_portfolio/core/shared/errors/error_mapper.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/outline_button.dart';
 import 'package:my_portfolio/core/helpers/image_picker.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
-import 'package:my_portfolio/modules/profile/presentation/viewmodles/social_image_viewmodel.dart';
+import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/social_image_viewmodel.dart';
 
 class AddSocialLinkDialog extends ConsumerWidget {
   const AddSocialLinkDialog({super.key});

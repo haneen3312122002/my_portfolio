@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/core/shared/widgets/images/circle_image.dart';
 import 'package:my_portfolio/core/theme/app_colors.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
-import 'package:my_portfolio/modules/profile/presentation/viewmodles/image_upload_viewmodel.dart';
+import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/image_upload_viewmodel.dart';
 
 class ProfileImageBlock extends ConsumerWidget {
   const ProfileImageBlock({super.key, required this.image, required this.size});

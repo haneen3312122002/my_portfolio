@@ -5,26 +5,25 @@ class AppTile extends StatelessWidget {
   const AppTile({
     super.key,
     required this.title,
-    this.icon,
+    this.leading,
     this.trailing,
     this.subtitle,
   });
 
   final String title;
-  final Widget? icon;
-  final Widget? subtitle;
-
-  /// أي شي بدك تضيفه لاحقًا (progress, button, badge…)
+  final Widget? leading;
   final Widget? trailing;
+  final Widget? subtitle;
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (icon != null) ...[icon!, const SizedBox(width: 12)],
+          // ===== LEADING (image / icon) =====
+          if (leading != null) ...[leading!, const SizedBox(width: 12)],
 
           // ===== TEXT =====
           Expanded(
@@ -32,12 +31,18 @@ class AppTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 if (subtitle != null) ...[const SizedBox(height: 6), subtitle!],
               ],
             ),
           ),
 
+          // ===== TRAILING =====
           if (trailing != null) ...[const SizedBox(width: 12), trailing!],
         ],
       ),

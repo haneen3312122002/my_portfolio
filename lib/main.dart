@@ -9,6 +9,7 @@ import 'package:my_portfolio/firebase_options.dart';
 import 'package:my_portfolio/modules/profile/presentation/screens/home_screen_view.dart';
 import 'package:my_portfolio/modules/project/presentation/screens/projects_screen.dart';
 import 'package:my_portfolio/project_service_test.dart';
+import 'package:my_portfolio/skills_test.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
