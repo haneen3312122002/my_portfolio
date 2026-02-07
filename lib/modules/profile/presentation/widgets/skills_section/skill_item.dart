@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/core/shared/utils/helpers.dart';
-import 'package:my_portfolio/core/shared/widgets/animations/animated_progress_bar.dart';
+import 'package:my_portfolio/core/shared/widgets/sliders/animated_progress_bar.dart';
 import 'package:my_portfolio/core/shared/widgets/cards/ship.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/list_tile.dart';
 

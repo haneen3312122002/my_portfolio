@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/material.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/skill_entity.dart';
 import 'package:my_portfolio/modules/profile/domain/repositories/skill_repo.dart';
 
@@ -17,8 +18,11 @@ class SkillUseCase {
     return skillRepo.getSkillById(id);
   }
 
-  Future<void> upsertSkill(SkillEntity skill) {
-    return skillRepo.upsertSkill(skill);
+  Future<String> upsertSkill(SkillEntity skill) async {
+    debugPrint('[USECASE] upsertSkill. id="${skill.id}"');
+    final id = await skillRepo.upsertSkill(skill);
+    debugPrint('[USECASE] returned id="$id"');
+    return id;
   }
 
   Future<void> updateSkillFields(String id, Map<String, dynamic> fields) {

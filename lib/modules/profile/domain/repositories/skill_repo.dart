@@ -7,7 +7,7 @@ abstract class SkillRepo {
   Future<List<SkillEntity>> getSkills();
   Future<SkillEntity?> getSkillById(String id);
 
-  Future<void> upsertSkill(SkillEntity skill);
+  Future<String> upsertSkill(SkillEntity skill);
   Future<void> updateSkillFields(String id, Map<String, dynamic> fields);
   Future<void> deleteSkill(String id);
 

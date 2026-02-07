@@ -15,9 +15,10 @@ final skillImageUploadProvider =
 class SkillImageUploadViewModel extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
-
-  /// skillId: الدوك id داخل collection skills
+  //  this function will be called from the UI when user wants to pick and upload an image for a skill
   Future<void> pickAndUploadSkillImage({required String skillId}) async {
+    if (skillId.trim().isEmpty) return;
+
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(() async {

@@ -30,13 +30,24 @@ class SkillsViewModel extends AsyncNotifier<List<SkillEntity>> {
   }
 
   /// ✅ Upsert (Add أو Update)
-  Future<void> upsertSkill(SkillEntity skill) async {
+  Future<String> upsertSkill(SkillEntity skill) async {
     state = const AsyncLoading();
+
+    String newId = '';
+
     state = await AsyncValue.guard(() async {
       final useCase = ref.read(skillUseCaseProvider);
-      await useCase.upsertSkill(skill);
+      debugPrint(
+        '[VM] upsertSkill called. incoming id="${skill.id}" name="${skill.name}"',
+      );
+      newId = await useCase.upsertSkill(skill);
+      debugPrint('[VM] upsertSkill returned id="$newId"');
+
       return await _fetchSkills();
     });
+    debugPrint('vm--New skill added with id: $newId');
+
+    return newId;
   }
 
   /// ✅ Update fields (لو بدك تعديل جزئي)
@@ -59,32 +70,5 @@ class SkillsViewModel extends AsyncNotifier<List<SkillEntity>> {
       await useCase.deleteSkill(id);
       return await _fetchSkills();
     });
-  }
-
-  /// ✅ Upload image (Web + Mobile) + Update imageUrl in Firestore
-  Future<String?> uploadSkillImage({
-    required String skillId,
-    required XFile file,
-  }) async {
-    try {
-      final useCase = ref.read(skillUseCaseProvider);
-
-      final url = await useCase.uploadSkillImageAndUpdate(
-        skillId: skillId,
-        file: file,
-        fieldName: 'imageUrl',
-      );
-
-      // بعد الرفع/التحديث: حدّث القائمة
-      if (url != null) {
-        ref.invalidate(skillsProvider);
-      }
-
-      return url;
-    } catch (e, st) {
-      debugPrint('UPLOAD SKILL IMAGE VM ERROR => $e');
-      debugPrintStack(stackTrace: st);
-      rethrow;
-    }
   }
 }

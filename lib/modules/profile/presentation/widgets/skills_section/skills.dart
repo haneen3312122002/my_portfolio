@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_portfolio/core/shared/utils/helpers.dart';
-import 'package:my_portfolio/core/shared/widgets/animations/animated_progress_bar.dart';
 import 'package:my_portfolio/core/shared/widgets/animations/fadein.dart';
 import 'package:my_portfolio/core/shared/widgets/cards/ship.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/app_responsive_grid.dart';
-import 'package:my_portfolio/core/shared/widgets/lists/list_tile.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/modules/profile/presentation/viewmodles/skills/skills_expanded_viewmocel.dart';
 

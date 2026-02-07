@@ -20,7 +20,7 @@ class SkillService {
   Future<List<SkillModel>> getSkills() async {
     try {
       final qs = await _skillsRef
-          .orderBy('name')
+          .orderBy('createdAt', descending: false)
           .get()
           .timeout(const Duration(seconds: 8));
 
@@ -34,6 +34,19 @@ class SkillService {
       debugPrint('GET SKILLS ERROR: $e');
       debugPrintStack(stackTrace: st);
       rethrow;
+    }
+  }
+
+  //one run for the function to make migration for the createdAt field for old skills that were created before adding this field
+  Future<void> backfillCreatedAt() async {
+    final snap = await _skillsRef.get();
+
+    for (final doc in snap.docs) {
+      final data = doc.data();
+
+      if (!data.containsKey('createdAt')) {
+        await doc.reference.update({'createdAt': FieldValue.serverTimestamp()});
+      }
     }
   }
 
@@ -57,12 +70,35 @@ class SkillService {
   }
 
   /// ✅ Add/Update skill (upsert)
-  Future<void> upsertSkill(SkillModel skill) async {
+  /// ✅ Add/Update skill (upsert)
+  /// - إذا skill.id فاضي => ADD مع auto-id
+  /// - إذا skill.id موجود => UPSERT بنفس الـ id
+  Future<String> upsertSkill(SkillModel skill) async {
     try {
+      final id = skill.id.trim();
+
+      // ✅ ADD mode (auto-id)
+      if (id.isEmpty) {
+        final doc = _skillsRef.doc(); // يولد ID تلقائي
+        final data = skill.toJson();
+
+        data['id'] = doc.id;
+        data['created_at'] = FieldValue.serverTimestamp();
+
+        await doc
+            .set(data, SetOptions(merge: true))
+            .timeout(const Duration(seconds: 8));
+
+        return doc.id;
+      }
+
+      // ✅ UPSERT mode (known id)
       await _skillsRef
-          .doc(skill.id)
+          .doc(id)
           .set(skill.toJson(), SetOptions(merge: true))
           .timeout(const Duration(seconds: 8));
+
+      return id;
     } catch (e, st) {
       debugPrint('UPSERT SKILL ERROR: $e');
       debugPrintStack(stackTrace: st);

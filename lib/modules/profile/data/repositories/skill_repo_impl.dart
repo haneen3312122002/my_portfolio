@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/material.dart';
 import 'package:my_portfolio/modules/profile/data/datasources/skills_datasource.dart';
 import 'package:my_portfolio/modules/profile/data/models/skill_model.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/skill_entity.dart';
@@ -22,8 +23,10 @@ class SkillRepoImpl implements SkillRepo {
   }
 
   @override
-  Future<void> upsertSkill(SkillEntity skill) {
-    return _service.upsertSkill(SkillModel.fromEntity(skill));
+  Future<String> upsertSkill(SkillEntity skill) async {
+    final id = await _service.upsertSkill(SkillModel.fromEntity(skill));
+    debugPrint('repo--New skill added with id: $id');
+    return id;
   }
 
   @override

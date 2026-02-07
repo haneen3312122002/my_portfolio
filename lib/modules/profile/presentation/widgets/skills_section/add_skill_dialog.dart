@@ -4,7 +4,8 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart' as ip;
 import 'package:my_portfolio/core/shared/utils/helpers.dart'
-    show colorFromHex, mycolorFromHex, myhexFromColor;
+    show mycolorFromHex, myhexFromColor;
+import 'package:my_portfolio/core/shared/widgets/sliders/editing_slider.dart';
 
 import 'package:my_portfolio/modules/profile/domain/entites/skill_entity.dart';
 import 'package:my_portfolio/modules/profile/presentation/viewmodles/skills/skills_viewmodel.dart';
@@ -12,8 +13,7 @@ import 'package:my_portfolio/modules/profile/presentation/viewmodles/skills/skil
 
 class AddSkillDialog extends ConsumerStatefulWidget {
   const AddSkillDialog({super.key, this.skill});
-
-  /// لو مش null => Edit mode
+  //if skill != null => edit mode, else add mode
   final SkillEntity? skill;
 
   @override
@@ -23,19 +23,19 @@ class AddSkillDialog extends ConsumerStatefulWidget {
 class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
   final _nameCtrl = TextEditingController();
   final _subCtrl = TextEditingController();
-
+  // default values for new skill
   int _proficiency = 80;
   Color _selectedColor = const Color(0xFF00C2FF);
 
   XFile? _pickedImage; // cross_file
   bool _saving = false;
-
+  // helper to know if we're in edit mode or add mode
   bool get _isEditMode => widget.skill != null;
 
   @override
   void initState() {
     super.initState();
-
+    //if we're in edit mode, prefill the fields with existing skill data
     final s = widget.skill;
     if (s != null) {
       _nameCtrl.text = s.name;
@@ -46,25 +46,14 @@ class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
   }
 
   @override
+  //cleanup controllers to prevent memory leaks
   void dispose() {
     _nameCtrl.dispose();
     _subCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final picker = ref.read(imagePickerProvider);
-    final file = await picker.pickImage(
-      source: ip.ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (file == null) return;
-
-    setState(() {
-      _pickedImage = XFile(file.path);
-    });
-  }
-
+  // helper to parse subskills from textarea input (one per line)
   List<String> _parseSubSkills(String raw) {
     return raw
         .split('\n')
@@ -73,50 +62,11 @@ class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
         .toList();
   }
 
-  Future<void> _save() async {
-    final name = _nameCtrl.text.trim();
-    if (name.isEmpty) return;
-
-    setState(() => _saving = true);
-
-    try {
-      final id = _isEditMode
-          ? widget.skill!.id
-          : 'skill_${DateTime.now().millisecondsSinceEpoch}';
-
-      final skill = SkillEntity(
-        id: id,
-        name: name,
-        // بالـ edit نخلي الصورة القديمة إذا ما اخترنا جديد
-        imageUrl: _isEditMode ? widget.skill!.imageUrl : '',
-        proficiency: _proficiency.clamp(0, 100),
-        subSkills: _parseSubSkills(_subCtrl.text),
-        barColorHex: myhexFromColor(_selectedColor),
-      );
-
-      // ✅ upsert (add أو update)
-      await ref.read(skillsProvider.notifier).upsertSkill(skill);
-
-      // ✅ لو في صورة جديدة فقط
-      if (_pickedImage != null) {
-        await ref
-            .read(skillImageUploadProvider.notifier)
-            .pickAndUploadSkillImage(skillId: id);
-      }
-
-      // ✅ تحديث UI
-      ref.invalidate(skillsProvider);
-
-      if (mounted) Navigator.pop(context);
-    } catch (_) {
-      rethrow;
-    } finally {
-      if (mounted) setState(() => _saving = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final skillImageUploadVm = ref.read(skillImageUploadProvider.notifier);
+    final skillsVm = ref.read(skillsProvider.notifier);
+    final canUploadImage = _isEditMode && widget.skill!.id.isNotEmpty;
     return AlertDialog(
       title: Text(_isEditMode ? 'Edit Skill' : 'Add Skill'),
       content: SizedBox(
@@ -142,15 +92,13 @@ class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
                   Text('${_proficiency.clamp(0, 100)}%'),
                 ],
               ),
-              Slider(
-                value: _proficiency.toDouble(),
-                min: 0,
-                max: 100,
-                divisions: 100,
-                onChanged: (v) => setState(() => _proficiency = v.round()),
+
+              EditingSlider(
+                initial: _proficiency,
+
+                onChanged: (v) => setState(() => _proficiency = v),
               ),
               const SizedBox(height: 8),
-
               // subskills textarea
               TextField(
                 controller: _subCtrl,
@@ -182,8 +130,9 @@ class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
                     TextButton(
                       onPressed: () async {
                         Color temp = _selectedColor;
-
+                        // open color picker dialog
                         final ok = await showDialog<bool>(
+                          //if the function returns true, it means user saved the color, if false or null => user cancelled
                           context: context,
                           builder: (_) => AlertDialog(
                             title: const Text('Pick color'),
@@ -232,7 +181,11 @@ class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
                     ),
                   ),
                   TextButton.icon(
-                    onPressed: _pickImage,
+                    onPressed: canUploadImage
+                        ? () => skillImageUploadVm.pickAndUploadSkillImage(
+                            skillId: widget.skill!.id,
+                          )
+                        : null,
                     icon: const Icon(Icons.image),
                     label: Text(_isEditMode ? 'Change' : 'Choose'),
                   ),
@@ -248,7 +201,32 @@ class _AddSkillDialogState extends ConsumerState<AddSkillDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: _saving ? null : _save,
+          onPressed: () async {
+            if (_saving) return;
+            if (_isEditMode) {
+              skillsVm.updateSkillFields(widget.skill!.id, {
+                'name': _nameCtrl.text.trim(),
+                'proficiency': _proficiency,
+                'subSkills': _parseSubSkills(_subCtrl.text),
+                'barColorHex': myhexFromColor(_selectedColor),
+              });
+              Navigator.pop(context);
+            } else {
+              final newSkill = SkillEntity(
+                id: '',
+                // will be set by Firestore
+                name: _nameCtrl.text.trim(),
+                proficiency: _proficiency,
+                subSkills: _parseSubSkills(_subCtrl.text),
+                barColorHex: myhexFromColor(_selectedColor),
+                imageUrl: '', // will be set after image upload
+              );
+              final id = skillsVm.upsertSkill(newSkill);
+              debugPrint('dialog--New skill added with id: $id');
+              Navigator.pop(context);
+            }
+          },
+
           child: _saving
               ? const SizedBox(
                   width: 18,
