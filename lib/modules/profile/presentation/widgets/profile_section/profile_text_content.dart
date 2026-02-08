@@ -57,7 +57,7 @@ class ProfileTextContent extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 14),
-        AppTypewriterText(
+        AppBodyText(
           "Experienced Flutter Developer passionate about creating "
           "intuitive & visually appealing applications.",
           textAlign: centered ? TextAlign.center : TextAlign.start,

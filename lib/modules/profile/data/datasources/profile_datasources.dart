@@ -21,6 +21,7 @@ class ProfileService {
     try {
       print('GET PROFILE: before get');
       final doc = await docRef.get().timeout(const Duration(seconds: 8));
+      //wait for 8 seconds then throw timeout exception if no response
       print('GET PROFILE: after get exists=${doc.exists}');
 
       if (!doc.exists) {
@@ -42,6 +43,7 @@ class ProfileService {
     }
   }
 
+  // upsert profile (create if not exists, update if exists)
   Future<void> upsertProfile(ProfileModel profile) async {
     await _firestore
         .collection(_collection)
@@ -49,6 +51,7 @@ class ProfileService {
         .set(profile.toDocument(), SetOptions(merge: true));
   }
 
+  // update specific fields in profile document
   Future<void> updateProfileFields(Map<String, dynamic> fields) async {
     if (fields.isEmpty) return;
 
@@ -105,7 +108,6 @@ class ProfileService {
       ),
     );
 
-    // يطبع progress/state
     task.snapshotEvents.listen(
       (s) {
         print('state=${s.state}  ${s.bytesTransferred}/${s.totalBytes}');

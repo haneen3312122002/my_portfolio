@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/card.dart';
+import 'package:my_portfolio/core/theme/app_colors.dart';
 
 class AppTile extends StatelessWidget {
   const AppTile({
@@ -16,16 +17,16 @@ class AppTile extends StatelessWidget {
   final Widget? subtitle;
 
   @override
+  @override
   Widget build(BuildContext context) {
     return AppCard(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ===== LEADING (image / icon) =====
           if (leading != null) ...[leading!, const SizedBox(width: 12)],
 
-          // ===== TEXT =====
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +43,6 @@ class AppTile extends StatelessWidget {
             ),
           ),
 
-          // ===== TRAILING =====
           if (trailing != null) ...[const SizedBox(width: 12), trailing!],
         ],
       ),

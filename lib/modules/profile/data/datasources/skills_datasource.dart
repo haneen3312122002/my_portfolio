@@ -16,17 +16,16 @@ class SkillService {
   CollectionReference<Map<String, dynamic>> get _skillsRef =>
       _firestore.collection(_collection);
 
-  /// ✅ Get all skills (ordered by name)
+  // Get all skills (ordered by createdAt ascending)
   Future<List<SkillModel>> getSkills() async {
     try {
       final qs = await _skillsRef
-          .orderBy('createdAt', descending: false)
+          .orderBy('created_at', descending: false)
           .get()
           .timeout(const Duration(seconds: 8));
 
       return qs.docs.map((d) {
         final data = d.data();
-        // لو ما بتخزني id جوّا الدوك، خليه من doc.id
         data['id'] = data['id'] ?? d.id;
         return SkillModel.fromJson(data);
       }).toList();
@@ -50,7 +49,7 @@ class SkillService {
     }
   }
 
-  /// ✅ Get one skill
+  //  Get one skill
   Future<SkillModel?> getSkillById(String id) async {
     try {
       final doc = await _skillsRef
@@ -69,17 +68,13 @@ class SkillService {
     }
   }
 
-  /// ✅ Add/Update skill (upsert)
-  /// ✅ Add/Update skill (upsert)
-  /// - إذا skill.id فاضي => ADD مع auto-id
-  /// - إذا skill.id موجود => UPSERT بنفس الـ id
   Future<String> upsertSkill(SkillModel skill) async {
     try {
       final id = skill.id.trim();
 
-      // ✅ ADD mode (auto-id)
+      //  aDD mode (auto-id)
       if (id.isEmpty) {
-        final doc = _skillsRef.doc(); // يولد ID تلقائي
+        final doc = _skillsRef.doc(); // creates new doc ref with auto-id
         final data = skill.toJson();
 
         data['id'] = doc.id;
@@ -92,7 +87,7 @@ class SkillService {
         return doc.id;
       }
 
-      // ✅ UPSERT mode (known id)
+      //  UPSERT mode (known id)
       await _skillsRef
           .doc(id)
           .set(skill.toJson(), SetOptions(merge: true))
@@ -106,7 +101,7 @@ class SkillService {
     }
   }
 
-  /// ✅ Update specific fields
+  // update specific fields
   Future<void> updateSkillFields(String id, Map<String, dynamic> fields) async {
     if (fields.isEmpty) return;
 
@@ -122,7 +117,7 @@ class SkillService {
     }
   }
 
-  /// ✅ Delete skill
+  // Delete skill
   Future<void> deleteSkill(String id) async {
     try {
       await _skillsRef.doc(id).delete().timeout(const Duration(seconds: 8));
@@ -133,7 +128,7 @@ class SkillService {
     }
   }
 
-  /// ✅ Method واحدة: ترفع الصورة + ترجع URL + تعمل update للـ imageUrl
+  // Upload skill image and update skill document with the image URL
   Future<String?> uploadSkillImageAndUpdate({
     required String skillId,
     required XFile file,
@@ -159,7 +154,6 @@ class SkillService {
         ),
       );
 
-      // (اختياري) progress
       task.snapshotEvents.listen(
         (s) => debugPrint(
           'SKILL IMG state=${s.state} ${s.bytesTransferred}/${s.totalBytes}',
@@ -182,7 +176,7 @@ class SkillService {
     }
   }
 
-  /// لو بدك bytes (Web picker)
+  // Upload skill image from bytes and update skill document with the image URL
   Future<String?> uploadSkillImageBytesAndUpdate({
     required String skillId,
     required Uint8List bytes,
@@ -220,6 +214,7 @@ class SkillService {
     }
   }
 
+  //guess content type based on file extension
   String _guessContentType(String fileName) {
     final lower = fileName.toLowerCase();
     if (lower.endsWith('.png')) return 'image/png';

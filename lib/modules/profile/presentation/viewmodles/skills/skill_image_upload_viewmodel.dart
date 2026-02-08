@@ -3,9 +3,8 @@ import 'package:image_picker/image_picker.dart' as ip;
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/skills_providers.dart';
+import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 import 'package:my_portfolio/modules/profile/presentation/viewmodles/skills/skills_viewmodel.dart';
-
-final imagePickerProvider = Provider<ip.ImagePicker>((ref) => ip.ImagePicker());
 
 final skillImageUploadProvider =
     AsyncNotifierProvider<SkillImageUploadViewModel, void>(
@@ -31,7 +30,6 @@ class SkillImageUploadViewModel extends AsyncNotifier<void> {
 
       if (file == null) return;
 
-      // ✅ حوّليه لـ cross_file
       final XFile xfile = XFile(file.path);
 
       final useCase = ref.read(skillUseCaseProvider);
@@ -44,7 +42,6 @@ class SkillImageUploadViewModel extends AsyncNotifier<void> {
 
       if (url == null || url.isEmpty) return;
 
-      // ✅ عشان UI يتحدث (جيب القائمة من جديد)
       ref.invalidate(skillsProvider);
 
       debugPrint('SKILL image uploaded => $url');

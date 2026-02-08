@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,7 +28,7 @@ class SkillsViewModel extends AsyncNotifier<List<SkillEntity>> {
     state = await AsyncValue.guard(_fetchSkills);
   }
 
-  /// ✅ Upsert (Add أو Update)
+  // Upsert (Add / Update)
   Future<String> upsertSkill(SkillEntity skill) async {
     state = const AsyncLoading();
 
@@ -50,7 +49,7 @@ class SkillsViewModel extends AsyncNotifier<List<SkillEntity>> {
     return newId;
   }
 
-  /// ✅ Update fields (لو بدك تعديل جزئي)
+  //Update fields
   Future<void> updateSkillFields(String id, Map<String, dynamic> fields) async {
     if (fields.isEmpty) return;
 
@@ -62,7 +61,7 @@ class SkillsViewModel extends AsyncNotifier<List<SkillEntity>> {
     });
   }
 
-  /// ✅ Delete
+  // Delete
   Future<void> deleteSkill(String id) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {

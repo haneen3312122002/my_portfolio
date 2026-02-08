@@ -61,7 +61,6 @@ class ProfileViewModel extends AsyncNotifier<ProfileEntity> {
     if (draft.containsKey('skills')) {
       final raw = draft['skills'];
 
-      // ممكن تكون String أو List<String>
       final List<String> parsed = (raw is List)
           ? raw
                 .map((e) => e.toString().trim())
@@ -86,7 +85,6 @@ class ProfileViewModel extends AsyncNotifier<ProfileEntity> {
     if (image != null) fields['image'] = image;
 
     if (fields.isEmpty) {
-      // ما في إشي فعلي ينحفظ
       isEditVm.state = false;
       return;
     }
@@ -96,11 +94,9 @@ class ProfileViewModel extends AsyncNotifier<ProfileEntity> {
 
       await updateProfileFields(fields);
 
-      // صفّر المسودة واطلع من edit
       ref.read(profileDraftProvider.notifier).state = {};
       isEditVm.state = false;
 
-      // مهم: عشان يعيد جلب البروفايل (إذا getProfile مش stream)
       ref.invalidate(profileProvider);
     } catch (e, st) {
       debugPrint('PROFILE onSave ERROR => $e');

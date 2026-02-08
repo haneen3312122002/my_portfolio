@@ -4,8 +4,6 @@ import 'package:cross_file/cross_file.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/profile_service_provider.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 
-final imagePickerProvider = Provider<ip.ImagePicker>((ref) => ip.ImagePicker());
-
 final profileImageUploadProvider =
     AsyncNotifierProvider<ProfileImageUploadViewModel, void>(
       ProfileImageUploadViewModel.new,
@@ -20,15 +18,14 @@ class ProfileImageUploadViewModel extends AsyncNotifier<void> {
 
     state = await AsyncValue.guard(() async {
       final picker = ref.read(imagePickerProvider);
-
+      // Pick an image from the gallery
       final file = await picker.pickImage(
         source: ip.ImageSource.gallery,
         imageQuality: 85,
       );
 
       if (file == null) return;
-
-      // ✅ حوّليه لنوع cross_file (نفس المسار)
+      // Convert to XFile for upload
       final XFile xfile = XFile(file.path);
 
       final useCase = ref.read(profileUseCaseProvider);

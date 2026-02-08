@@ -13,7 +13,7 @@ class AppColors {
   static const Color body = Color(0xFF8DB8C6);
 
   /// Cards background (أفتح شوي مع شفافية)
-  static const Color card = Color(0x993F4274);
+  static const Color card = Color.fromARGB(153, 45, 47, 85);
 
   /// Basics
   static const Color background = Color(0xFFFFFFFF);

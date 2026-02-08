@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/core/theme/app_colors.dart';
 
 class SkillsChips extends StatelessWidget {
   final List<String> skills;
@@ -13,8 +12,8 @@ class SkillsChips extends StatelessWidget {
     super.key,
     required this.skills,
     required this.chipColor,
-    this.spacing = 10,
-    this.runSpacing = 10,
+    this.spacing = 6,
+    this.runSpacing = 6,
   });
 
   @override
@@ -44,7 +43,6 @@ class _SkillChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: color.withOpacity(0.10),
         borderRadius: BorderRadius.circular(999),
@@ -62,7 +60,7 @@ class _SkillChip extends StatelessWidget {
         style: TextStyle(
           color: Colors.white.withOpacity(0.92),
           fontWeight: FontWeight.w700,
-          fontSize: 13.5,
+          fontSize: 11,
         ),
       ),
     );

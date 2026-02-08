@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 
-class SkillsExpandedNotifier extends StateNotifier<Map<String, bool>> {
-  SkillsExpandedNotifier() : super(const {});
+class SkillsExpandedVm extends StateNotifier<Map<String, bool>> {
+  SkillsExpandedVm() : super(const {});
 
   bool isOpen(String skillId) => state[skillId] ?? false;
 
@@ -18,6 +18,6 @@ class SkillsExpandedNotifier extends StateNotifier<Map<String, bool>> {
 }
 
 final skillsExpandedProvider =
-    StateNotifierProvider<SkillsExpandedNotifier, Map<String, bool>>(
-      (ref) => SkillsExpandedNotifier(),
+    StateNotifierProvider<SkillsExpandedVm, Map<String, bool>>(
+      (ref) => SkillsExpandedVm(),
     );

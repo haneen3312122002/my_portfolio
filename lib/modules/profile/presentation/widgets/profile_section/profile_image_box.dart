@@ -19,7 +19,7 @@ class ProfileImageBlock extends ConsumerWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        GlowCircleImage(image: image, size: size),
+        GlowCircleImage(image: image, size: size, animateOnLoad: false),
         if (isEdit)
           Positioned(
             right: 8,
