@@ -10,6 +10,7 @@ import 'package:my_portfolio/modules/profile/presentation/viewmodles/profile/pro
 import 'package:my_portfolio/modules/profile/presentation/widgets/profile_section/profile_section.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/skills_section/skills.dart';
 import 'package:my_portfolio/modules/profile/presentation/widgets/admin_actions.dart';
+import 'package:my_portfolio/modules/project/presentation/screens/projects_screen.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -62,6 +63,8 @@ class HomePage extends ConsumerWidget {
                         },
                         child: const SkillsSection(),
                       ),
+                      const SizedBox(height: 48),
+                      AnimateOnVisible(child: const ProjectsGridSection()),
                     ],
                   ),
                 ),

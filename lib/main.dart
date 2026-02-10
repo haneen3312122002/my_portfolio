@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         builder: (context, screen) {
           switch (screen) {
             case AppScreenType.desktop:
-              return const HomePage(); // أو DesktopHomePage()
+              return const HomePage(); // أو DesktopHomePage( // أو DesktopHomePage()
             case AppScreenType.tablet:
               return const HomePage(); // أو TabletHomePage()
             case AppScreenType.mobile:
