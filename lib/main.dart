@@ -43,13 +43,17 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light(),
       home: AppResponsiveShell(
         builder: (context, screen) {
+          final w = MediaQuery.of(context).size.width;
+
+          debugPrint("SHELL DEBUG => screen=$screen width=$w");
+
           switch (screen) {
             case AppScreenType.desktop:
-              return const HomePage(); // أو DesktopHomePage( // أو DesktopHomePage()
+              return const HomePage();
             case AppScreenType.tablet:
-              return const HomePage(); // أو TabletHomePage()
+              return const HomePage();
             case AppScreenType.mobile:
-              return const HomePage(); // أو MobileHomePage()
+              return const HomePage();
           }
         },
       ),

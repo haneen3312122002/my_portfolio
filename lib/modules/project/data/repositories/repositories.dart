@@ -59,4 +59,25 @@ class ProjectRepoImpl implements ProjectRepo {
   Future<void> deleteProjectWithFiles(ProjectEntity project) {
     return _service.deleteProjectWithFiles(ProjectModel.fromEntity(project));
   }
+
+  @override
+  Future<String> uploadProjectCover({
+    required String projectId,
+    required XFile cover,
+  }) {
+    return _service.uploadCover(projectId: projectId, cover: cover);
+  }
+
+  @override
+  Future<List<String>> uploadProjectMedia({
+    required String projectId,
+    required List<XFile> files,
+    required String folderName,
+  }) {
+    return _service.uploadMany(
+      projectId: projectId,
+      files: files,
+      folderName: folderName,
+    );
+  }
 }

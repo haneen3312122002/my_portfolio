@@ -58,4 +58,25 @@ class ProjectUseCase {
   Future<void> deleteProjectWithFiles(ProjectEntity project) {
     return _repo.deleteProjectWithFiles(project);
   }
+
+  // ✅ Upload cover only
+  Future<String> uploadProjectCover({
+    required String projectId,
+    required XFile cover,
+  }) {
+    return _repo.uploadProjectCover(projectId: projectId, cover: cover);
+  }
+
+  // ✅ Upload images/icons only
+  Future<List<String>> uploadProjectMedia({
+    required String projectId,
+    required List<XFile> files,
+    required String folderName,
+  }) {
+    return _repo.uploadProjectMedia(
+      projectId: projectId,
+      files: files,
+      folderName: folderName,
+    );
+  }
 }

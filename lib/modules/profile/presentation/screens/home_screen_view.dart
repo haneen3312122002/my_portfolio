@@ -58,13 +58,18 @@ class HomePage extends ConsumerWidget {
                       const SizedBox(width: 48),
 
                       AnimateOnVisible(
+                        visibleFraction: 0.03, // بدل 0.35
+
                         onReplay: () {
                           ref.read(skillsReplayProvider.notifier).state++;
                         },
                         child: const SkillsSection(),
                       ),
                       const SizedBox(height: 48),
-                      AnimateOnVisible(child: const ProjectsGridSection()),
+                      AnimateOnVisible(
+                        visibleFraction: 0.03, // بدل 0.35
+                        child: const ProjectsGridSection(),
+                      ),
                     ],
                   ),
                 ),

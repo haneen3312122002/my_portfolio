@@ -14,6 +14,7 @@ class AppResponsiveGrid extends StatelessWidget {
     this.runGap = 16,
     this.childAspectRatio = 3.2,
     this.padding,
+    this.useShell = true,
   });
 
   final int itemCount;
@@ -28,8 +29,54 @@ class AppResponsiveGrid extends StatelessWidget {
   final double childAspectRatio;
   final EdgeInsetsGeometry? padding;
 
+  /// ✅ true: استخدم AppResponsiveShell (السلوك القديم) — ما بكسر الأماكن الثانية
+  /// ✅ false: استخدم LayoutBuilder (أفضل داخل Sections/Scroll)
+  final bool useShell;
+
   @override
   Widget build(BuildContext context) {
+    // ✅ المسار الجديد (للـSections داخل Scroll)
+    if (!useShell) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          // بعض الـparents بيعطوا maxWidth غير bounded، فبنرجع لـ MediaQuery
+          final mediaW = MediaQuery.of(context).size.width;
+          final w = (constraints.hasBoundedWidth && constraints.maxWidth > 0)
+              ? constraints.maxWidth
+              : mediaW;
+
+          int cols;
+          if (w < 650) {
+            cols = mobile;
+          } else if (w < 1100) {
+            cols = tablet;
+          } else {
+            cols = desktop;
+          }
+
+          cols = cols < 1 ? 1 : cols;
+
+          final grid = GridView.builder(
+            primary: false,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: itemCount,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: cols,
+              crossAxisSpacing: gap,
+              mainAxisSpacing: runGap,
+              childAspectRatio: childAspectRatio,
+            ),
+            itemBuilder: itemBuilder,
+          );
+
+          if (padding == null) return grid;
+          return Padding(padding: padding!, child: grid);
+        },
+      );
+    }
+
+    // ✅ المسار القديم (كما هو) — للأماكن اللي معتمدة على Shell
     return AppResponsiveShell(
       builder: (context, screen) {
         final cols = switch (screen) {
@@ -39,11 +86,12 @@ class AppResponsiveGrid extends StatelessWidget {
         };
 
         final grid = GridView.builder(
+          primary: false,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: itemCount,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: cols,
+            crossAxisCount: cols < 1 ? 1 : cols, // حماية
             crossAxisSpacing: gap,
             mainAxisSpacing: runGap,
             childAspectRatio: childAspectRatio,
@@ -52,7 +100,6 @@ class AppResponsiveGrid extends StatelessWidget {
         );
 
         if (padding == null) return grid;
-
         return Padding(padding: padding!, child: grid);
       },
     );
