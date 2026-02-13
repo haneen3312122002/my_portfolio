@@ -1,8 +1,7 @@
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/core/helpers/image_picker.dart';
 import 'package:my_portfolio/modules/profile/domain/entites/social_link.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart' as ip;
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 import 'package:my_portfolio/modules/project/domain/entities/project_entity.dart';
 import 'package:my_portfolio/modules/project/presentation/providers/project_state_providers.dart';
@@ -19,6 +18,8 @@ class ProjectUpsertState {
   final List<SocialItem> links;
   final bool deleteOldFiles;
 
+  final bool isVertical;
+
   const ProjectUpsertState({
     this.coverFile,
     this.imageFiles = const [],
@@ -27,6 +28,7 @@ class ProjectUpsertState {
     this.existingIcons = const [],
     this.links = const [],
     this.deleteOldFiles = true,
+    this.isVertical = true,
   });
 
   ProjectUpsertState copyWith({
@@ -38,6 +40,7 @@ class ProjectUpsertState {
     List<String>? existingIcons,
     List<SocialItem>? links,
     bool? deleteOldFiles,
+    bool? isVertical,
   }) {
     return ProjectUpsertState(
       coverFile: coverFileToNull ? null : (coverFile ?? this.coverFile),
@@ -47,20 +50,20 @@ class ProjectUpsertState {
       existingIcons: existingIcons ?? this.existingIcons,
       links: links ?? this.links,
       deleteOldFiles: deleteOldFiles ?? this.deleteOldFiles,
+      isVertical: isVertical ?? this.isVertical,
     );
   }
 }
-//................
 
+// ✅ أهم تعديل: autoDispose عشان الستيت ينمسح لما الدايالوج يختفي
 final projectUpsertProvider =
-    NotifierProvider<ProjectUpsertNotifier, ProjectUpsertState>(
+    NotifierProvider.autoDispose<ProjectUpsertNotifier, ProjectUpsertState>(
       ProjectUpsertNotifier.new,
     );
 
 class ProjectUpsertNotifier extends Notifier<ProjectUpsertState> {
   @override
   ProjectUpsertState build() {
-    // Initialize from editingProject if exists
     final editing = ref.read(editingProjectProvider);
     if (editing == null) return const ProjectUpsertState();
 
@@ -69,6 +72,7 @@ class ProjectUpsertNotifier extends Notifier<ProjectUpsertState> {
       existingIcons: List.of(editing.projectIcons),
       links: List.of(editing.links),
       deleteOldFiles: true,
+      isVertical: editing.isVertical,
     );
   }
 
@@ -119,6 +123,11 @@ class ProjectUpsertNotifier extends Notifier<ProjectUpsertState> {
 
   void setDeleteOldFiles(bool v) => state = state.copyWith(deleteOldFiles: v);
 
+  void setIsVertical(bool v) => state = state.copyWith(isVertical: v);
+
+  // ✅ reset اختياري (مفيد لو بدك تمسحي الستيت يدويًا بدون invalidate)
+  void reset() => state = const ProjectUpsertState();
+
   // ---------- submit ----------
   Future<void> submit({
     required bool isEdit,
@@ -139,6 +148,7 @@ class ProjectUpsertNotifier extends Notifier<ProjectUpsertState> {
       links: List.unmodifiable(state.links),
       projectImages: List.unmodifiable(state.existingImages),
       projectIcons: List.unmodifiable(state.existingIcons),
+      isVertical: state.isVertical,
     );
 
     if (canEdit) {

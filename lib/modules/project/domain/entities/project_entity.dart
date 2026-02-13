@@ -8,6 +8,7 @@ class ProjectEntity {
   final List<SocialItem> links;
   final List<String> projectImages;
   final List<String> projectIcons;
+  final bool isVertical;
 
   const ProjectEntity({
     required this.id,
@@ -17,6 +18,7 @@ class ProjectEntity {
     required this.links,
     required this.projectImages,
     required this.projectIcons,
+    required this.isVertical,
   });
 
   ProjectEntity copyWith({
@@ -27,6 +29,7 @@ class ProjectEntity {
     List<SocialItem>? links,
     List<String>? projectImages,
     List<String>? projectIcons,
+    bool? isVertical,
   }) {
     return ProjectEntity(
       id: id ?? this.id,
@@ -36,6 +39,7 @@ class ProjectEntity {
       links: links ?? this.links,
       projectImages: projectImages ?? this.projectImages,
       projectIcons: projectIcons ?? this.projectIcons,
+      isVertical: isVertical ?? this.isVertical,
     );
   }
 }

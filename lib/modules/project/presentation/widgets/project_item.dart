@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_portfolio/core/shared/widgets/buttons/gradiant_button.dart';
+import 'package:my_portfolio/core/shared/widgets/buttons/outline_button.dart';
+import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
 
-import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/modules/project/domain/entities/project_entity.dart';
 import 'package:my_portfolio/modules/project/presentation/helpers/project_actions.dart';
 import 'package:my_portfolio/modules/project/presentation/widgets/project_images.dart';
@@ -49,26 +51,18 @@ class ProjectGridItem extends ConsumerWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ====== TITLE ======
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(2, 2, 2, 8),
-                  child: AppSubtitle(
-                    project.title,
-                    textAlign: TextAlign.center,
-                    softWrap: true,
-                  ),
-                ),
 
                 // ====== IMAGE AREA ======
                 LayoutBuilder(
                   builder: (context, c) {
                     final w = c.maxWidth;
                     final coverH = (w * 0.55).clamp(180.0, 260.0);
-                    final extraBottom = (w * 0.22).clamp(55.0, 95.0);
+                    final extraBottom = (w * 0.13).clamp(42.0, 73.0);
 
                     return ProjectShowcaseStack(
                       coverUrl: cover,
@@ -76,11 +70,20 @@ class ProjectGridItem extends ConsumerWidget {
                       coverHeight: coverH,
                       extraBottom: extraBottom,
                       overlapOnCover: 70,
+                      isVertical: project.isVertical, // ✅ من الـ entity
                     );
                   },
                 ),
 
-                const SizedBox(height: 10),
+                // const SizedBox(height: 2),
+                AppBodyText(
+                  project.description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
+                const SizedBox(height: 20),
 
                 // ====== ACTIONS ======
                 if (isEdit) ...[
@@ -113,7 +116,29 @@ class ProjectGridItem extends ConsumerWidget {
                     ],
                   ),
                 ] else ...[
-                  const SizedBox(height: 44),
+                  const SizedBox(height: 22),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GradientButton(
+                          onPressed: null, // رح تفعليه بعدين
+                          child: const Text(
+                            'View Project',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: AppOutlineButton(
+                          onPressed: null, // رح تفعليه بعدين
+                          child: const AppBodyText('Details'),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
                 ],
               ],
             ),

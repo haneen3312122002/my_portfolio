@@ -76,18 +76,37 @@ class ProjectsGridSection extends ConsumerWidget {
               const SizedBox(height: 24),
             ],
 
-            AppResponsiveGrid(
-              useShell: false,
-              itemCount: list.length,
-              mobile: 1,
-              tablet: 2,
-              desktop: 3,
-              gap: 16,
-              runGap: 16,
-              childAspectRatio: 0.85,
-              itemBuilder: (context, index) {
-                final p = list[index];
-                return ProjectGridItem(project: p);
+            LayoutBuilder(
+              builder: (context, c) {
+                final w = c.maxWidth;
+
+                // ✅ Mobile: List (ارتفاع ديناميكي، بدون ratio)
+                if (w < 650) {
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: list.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 14),
+                    itemBuilder: (context, index) =>
+                        ProjectGridItem(project: list[index]),
+                  );
+                }
+
+                // ✅ Tablet/Desktop: Grid زي ما هو (بس ratio مناسب)
+                final ratio = w < 1100 ? 0.78 : 0.85;
+
+                return AppResponsiveGrid(
+                  useShell: false,
+                  itemCount: list.length,
+                  mobile: 1,
+                  tablet: 2,
+                  desktop: 3,
+                  gap: 16,
+                  runGap: 16,
+                  childAspectRatio: ratio,
+                  itemBuilder: (context, index) =>
+                      ProjectGridItem(project: list[index]),
+                );
               },
             ),
           ],

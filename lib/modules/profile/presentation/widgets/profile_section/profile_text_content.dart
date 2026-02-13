@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_portfolio/core/shared/constants/links.dart';
 import 'package:my_portfolio/core/shared/utils/helpers.dart';
-import 'package:my_portfolio/core/shared/widgets/animations/written_text.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/gradiant_button.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/outline_button.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
@@ -25,44 +24,65 @@ class ProfileTextContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isEdit = ref.watch(isEditProvider);
-
     if (isEdit) return const SizedBox.shrink();
+
+    final size = MediaQuery.sizeOf(context);
+    final w = size.width;
+    final h = size.height;
+
+    // ✅ فقط للموبايل/الشاشات القصيرة
+    final isSmallMobile = (w < 400) || (h < 750);
+
+    // ✅ مسافات أقل للموبايل
+    final gap1 = isSmallMobile ? 10.0 : 14.0;
+    final gap2 = isSmallMobile ? 16.0 : 22.0;
+
+    // ✅ عنوان أصغر للموبايل (بدون ما نلمس الديسكتوب)
+    final baseTitleStyle = centered
+        ? Theme.of(context).textTheme.headlineLarge
+        : Theme.of(context).textTheme.displayLarge;
+
+    final titleStyle = (baseTitleStyle ?? const TextStyle()).copyWith(
+      fontSize: isSmallMobile
+          ? (centered ? 38 : 46) // موبايل
+          : (baseTitleStyle?.fontSize), // ديسكتوب زي ما هو
+      height: isSmallMobile ? 1.08 : 1.1,
+    );
 
     return Column(
       crossAxisAlignment: centered
           ? CrossAxisAlignment.center
           : CrossAxisAlignment.start,
       children: [
+        // ✅ Title Responsive
         RichText(
           textAlign: centered ? TextAlign.center : TextAlign.start,
           text: TextSpan(
-            style: centered
-                ? Theme.of(context).textTheme.headlineLarge
-                : Theme.of(context).textTheme.displayLarge,
+            style: titleStyle,
             children: [
               const TextSpan(text: "Hi, I'm Haneen.\n"),
               const TextSpan(text: "I build "),
               WidgetSpan(
                 alignment: PlaceholderAlignment.baseline,
                 baseline: TextBaseline.alphabetic,
-                child: GradientText(
-                  "beautiful",
-                  style: centered
-                      ? Theme.of(context).textTheme.headlineLarge
-                      : Theme.of(context).textTheme.displayLarge,
-                ),
+                child: GradientText("beautiful", style: titleStyle),
               ),
               const TextSpan(text: " mobile experiences\nwith Flutter"),
             ],
           ),
         ),
-        const SizedBox(height: 14),
+
+        SizedBox(height: gap1),
+
         AppBodyText(
           "Experienced Flutter Developer passionate about creating "
           "intuitive & visually appealing applications.",
           textAlign: centered ? TextAlign.center : TextAlign.start,
         ),
-        const SizedBox(height: 22),
+
+        SizedBox(height: gap2),
+
+        // ✅ الأزرار عندك Wrap ممتاز للموبايل، خلّيه كما هو
         Wrap(
           alignment: centered ? WrapAlignment.center : WrapAlignment.start,
           spacing: 12,

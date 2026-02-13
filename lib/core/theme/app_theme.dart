@@ -58,17 +58,32 @@ class AppTheme {
       ),
 
       // ElevatedButton
+      // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.body,
           foregroundColor: AppColors.heading,
           disabledBackgroundColor: AppColors.disabled,
           disabledForegroundColor: AppColors.body,
+
+          // ✅ نفس الحجم بالضبط
+          minimumSize: const Size(160, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          visualDensity: VisualDensity.compact,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+          // ✅ بوردر خفيف جدًا عشان يقرب من الـ outlined
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
+            side: BorderSide(
+              color: AppColors.primaryPurple.withOpacity(0.22),
+              width: 0.8,
+            ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          elevation: 0, // خليها 0 إذا بدك نفس إحساس الـ outline
+          shadowColor: Colors.transparent,
         ),
       ),
 
@@ -76,11 +91,21 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.body,
-          side: const BorderSide(color: AppColors.primaryPurple, width: 2),
+
+          // ✅ نفس الحجم بالضبط
+          minimumSize: const Size(160, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          visualDensity: VisualDensity.compact,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+          // ✅ بوردر خفيف عشان يطابق الـ Elevated (مش سميك)
+          side: BorderSide(color: AppColors.primaryPurple, width: 0.8),
+
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
         ),
       ),
 

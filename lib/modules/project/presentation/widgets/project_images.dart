@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:device_frame/device_frame.dart';
 import 'package:my_portfolio/core/shared/widgets/images/phone.dart';
+import 'package:my_portfolio/core/shared/widgets/images/square_image.dart';
 
 class ProjectShowcaseStack extends StatelessWidget {
   final String coverUrl;
@@ -15,6 +15,10 @@ class ProjectShowcaseStack extends StatelessWidget {
   /// How much the phones visually overlap on top of the cover.
   final double overlapOnCover;
 
+  /// If true => portrait phones (stacked)
+  /// If false => landscape devices (stacked)
+  final bool isVertical;
+
   const ProjectShowcaseStack({
     super.key,
     required this.coverUrl,
@@ -22,14 +26,18 @@ class ProjectShowcaseStack extends StatelessWidget {
     this.coverHeight = 240,
     this.extraBottom = 70,
     this.overlapOnCover = 70,
+    this.isVertical = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final images = _pickUpTo3(projectImageUrls);
 
-    // Total widget height = cover area + extra room for the phones.
     final totalHeight = coverHeight + extraBottom;
+
+    // Use overlapOnCover to decide where the devices should start.
+    final top = isVertical ? 40.0 : coverHeight - overlapOnCover;
+    final phonesHeight = totalHeight - top;
 
     return SizedBox(
       height: totalHeight,
@@ -47,16 +55,12 @@ class ProjectShowcaseStack extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    coverUrl,
+                  AppImage(
+                    url: coverUrl,
+                    borderRadius: 18,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: Colors.grey.shade300,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.broken_image_outlined, size: 34),
-                    ),
+                    neonBorder: true,
                   ),
-                  // Soft gradient to improve contrast over the cover.
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -71,42 +75,17 @@ class ProjectShowcaseStack extends StatelessWidget {
             ),
           ),
 
-          // Phones row (foreground)
+          // Devices (foreground)
           Positioned(
             left: 0,
             right: 0,
-            // You can tune this to control how much they sit on the cover.
-            top: coverHeight - overlapOnCover,
+            top: top,
+            height: phonesHeight, // prevents "no size" hit-test issues
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: PhoneFrame(
-                      imageUrl: images[0],
-                      scale: 0.85,
-                      tilt: -0.25,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: PhoneFrame(
-                      imageUrl: images[1],
-                      scale: 0.95,
-                      tilt: 0.0,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: PhoneFrame(
-                      imageUrl: images[2],
-                      scale: 0.85,
-                      tilt: 0.25,
-                    ),
-                  ),
-                ],
-              ),
+              child: isVertical
+                  ? _PortraitRow(images: images)
+                  : _LandscapeGrid(images: images),
             ),
           ),
         ],
@@ -114,11 +93,186 @@ class ProjectShowcaseStack extends StatelessWidget {
     );
   }
 
-  // Ensures we always have 3 images to display (even if list is short).
   List<String> _pickUpTo3(List<String> urls) {
     if (urls.isEmpty) return ['', '', ''];
     if (urls.length == 1) return [urls[0], urls[0], urls[0]];
     if (urls.length == 2) return [urls[0], urls[1], urls[1]];
     return urls.take(3).toList();
+  }
+}
+
+// ===== Portrait layout (smaller, light overlap) =====
+// ===== Portrait layout =====
+// Center on top + left/right behind with slight edge overlap
+class _PortraitRow extends StatelessWidget {
+  final List<String> images;
+  const _PortraitRow({required this.images});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, c) {
+        final w = c.maxWidth;
+
+        // Smaller devices
+        final cardW = (w * 0.24).clamp(90.0, 150.0);
+
+        // More spacing (less overlap)
+        final dx = (cardW * 0.75).clamp(75.0, 150.0);
+
+        final h = (cardW * 1.8).clamp(170.0, 260.0);
+
+        return SizedBox(
+          height: h,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // Left (behind) - Purple ONLY
+              Positioned(
+                left: (w / 2) - (cardW / 2) - dx,
+                top: 16,
+                width: cardW,
+                child: PhoneFrame(
+                  imageUrl: images[0],
+                  scale: 0.85,
+                  tilt: -0.10,
+                  orientation: Orientation.portrait,
+                  borderGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      PhoneFrame.primaryPurple,
+                      PhoneFrame.primaryPurple,
+                    ],
+                  ),
+                ),
+              ),
+
+              // Right (behind) - Blue ONLY
+              Positioned(
+                left: (w / 2) - (cardW / 2) + dx,
+                top: 16,
+                width: cardW,
+                child: PhoneFrame(
+                  imageUrl: images[2],
+                  scale: 0.85,
+                  tilt: 0.10,
+                  orientation: Orientation.portrait,
+                  borderGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [PhoneFrame.primaryBlue, PhoneFrame.primaryBlue],
+                  ),
+                ),
+              ),
+
+              // Center (front) - Gradient ONLY here
+              Positioned(
+                left: (w / 2) - (cardW / 2),
+                top: 0,
+                width: cardW,
+                child: PhoneFrame(
+                  imageUrl: images[1],
+                  scale: 0.92,
+                  tilt: 0.0,
+                  orientation: Orientation.portrait,
+                  borderGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [PhoneFrame.primaryPurple, PhoneFrame.primaryBlue],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ===== Landscape layout =====
+class _LandscapeGrid extends StatelessWidget {
+  final List<String> images;
+  const _LandscapeGrid({required this.images});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, c) {
+        final w = c.maxWidth;
+
+        final cardW = (w * 0.40).clamp(140.0, 240.0);
+        final dx = (cardW * 0.82).clamp(95.0, 180.0);
+        final h = (cardW * 0.72).clamp(120.0, 190.0);
+
+        return SizedBox(
+          height: h,
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              // Left (behind) - Purple ONLY
+              Positioned(
+                left: (w / 2) - (cardW / 2) - dx,
+                top: 10,
+                width: cardW,
+                child: PhoneFrame(
+                  imageUrl: images[0],
+                  scale: 0.92,
+                  tilt: -0.06,
+                  orientation: Orientation.landscape,
+                  borderGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      PhoneFrame.primaryPurple,
+                      PhoneFrame.primaryPurple,
+                    ],
+                  ),
+                ),
+              ),
+
+              // Right (behind) - Blue ONLY
+              Positioned(
+                left: (w / 2) - (cardW / 2) + dx,
+                top: 10,
+                width: cardW,
+                child: PhoneFrame(
+                  imageUrl: images[2],
+                  scale: 0.92,
+                  tilt: 0.06,
+                  orientation: Orientation.landscape,
+                  borderGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [PhoneFrame.primaryBlue, PhoneFrame.primaryBlue],
+                  ),
+                ),
+              ),
+
+              // Center (front) - Gradient ONLY here
+              Positioned(
+                left: (w / 2) - (cardW / 2),
+                top: 0,
+                width: cardW,
+                child: PhoneFrame(
+                  imageUrl: images[1],
+                  scale: 0.98,
+                  tilt: 0.0,
+                  orientation: Orientation.landscape,
+                  borderGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [PhoneFrame.primaryPurple, PhoneFrame.primaryBlue],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

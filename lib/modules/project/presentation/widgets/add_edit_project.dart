@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
 
 import 'package:my_portfolio/modules/project/presentation/providers/project_state_providers.dart';
 import 'package:my_portfolio/modules/project/presentation/viewmodels/project_upsert_viewmodel.dart';
@@ -7,8 +8,6 @@ import 'package:my_portfolio/modules/project/presentation/viewmodels/project_vie
 import 'package:my_portfolio/modules/profile/domain/entites/social_link.dart';
 import 'package:my_portfolio/modules/project/presentation/widgets/add_links_dialog.dart';
 
-/// Dialog used for both creating and editing a project.
-/// The UI stays "dumb": all picking/uploading/mutations are handled by projectUpsertProvider.
 class ProjectUpsertDialog extends ConsumerStatefulWidget {
   const ProjectUpsertDialog({super.key, required this.isEdit});
   final bool isEdit;
@@ -29,7 +28,6 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
   void initState() {
     super.initState();
 
-    // If we're editing, pre-fill the fields from the selected project.
     final editing = ref.read(editingProjectProvider);
 
     _titleCtrl = TextEditingController(text: editing?.title ?? '');
@@ -43,10 +41,19 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
     _descCtrl.dispose();
     _coverUrlCtrl.dispose();
 
-    // Clear upsert state so next time the dialog opens, it starts fresh.
+    // ✅ تنظيف كمان عند dispose (كشبكة أمان)
     ref.invalidate(projectUpsertProvider);
+    ref.read(editingProjectProvider.notifier).state = null;
 
     super.dispose();
+  }
+
+  void _closeDialog() {
+    // ✅ تنظيف قبل الإغلاق (Cancel / Save)
+    ref.invalidate(projectUpsertProvider);
+    ref.read(editingProjectProvider.notifier).state = null;
+
+    Navigator.pop(context);
   }
 
   Widget _sectionTitle(String text) => Padding(
@@ -56,11 +63,9 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // We rely on projectsProvider loading state to disable actions during save/update.
     final asyncProjects = ref.watch(projectsProvider);
     final isLoading = asyncProjects.isLoading;
 
-    // Dialog-specific state (picked files, links, flags...) comes from upsert provider.
     final upsert = ref.watch(projectUpsertProvider);
     final upsertVm = ref.read(projectUpsertProvider.notifier);
 
@@ -162,7 +167,15 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
                         .toList(),
                   ),
                 ],
-
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: upsert.isVertical,
+                  onChanged: isLoading ? null : upsertVm.setIsVertical,
+                  title: const AppBodyText('Vertical device preview'),
+                  subtitle: const AppBodyText(
+                    'Turn off for landscape/tablet style',
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -281,7 +294,7 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
                     contentPadding: EdgeInsets.zero,
                     value: upsert.deleteOldFiles,
                     onChanged: isLoading ? null : upsertVm.setDeleteOldFiles,
-                    title: const Text('Delete old files on replace'),
+                    title: const AppBodyText('Delete old files on replace'),
                   ),
                 ],
               ],
@@ -291,7 +304,7 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: isLoading ? null : () => Navigator.pop(context),
+          onPressed: isLoading ? null : _closeDialog,
           child: const Text('Cancel'),
         ),
         ElevatedButton(
@@ -307,9 +320,11 @@ class _ProjectUpsertDialogState extends ConsumerState<ProjectUpsertDialog> {
                       description: _descCtrl.text,
                       coverUrl: _coverUrlCtrl.text,
                     );
-                    if (context.mounted) Navigator.pop(context);
+
+                    if (!mounted) return;
+                    _closeDialog(); // ✅ ينظف وبعدين يسكر
                   } catch (_) {
-                    if (!context.mounted) return;
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(

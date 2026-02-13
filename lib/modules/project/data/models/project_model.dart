@@ -11,6 +11,7 @@ class ProjectModel extends ProjectEntity {
     required super.links,
     required super.projectImages,
     required super.projectIcons,
+    required super.isVertical,
   });
 
   factory ProjectModel.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -39,6 +40,7 @@ class ProjectModel extends ProjectEntity {
               .where((e) => e.isNotEmpty)
               .toList() ??
           const [],
+      isVertical: json['isVertical'] ?? true,
     );
   }
 
@@ -50,6 +52,7 @@ class ProjectModel extends ProjectEntity {
     links: entity.links,
     projectImages: entity.projectImages,
     projectIcons: entity.projectIcons,
+    isVertical: entity.isVertical,
   );
 
   Map<String, dynamic> toJson() => {
@@ -59,6 +62,7 @@ class ProjectModel extends ProjectEntity {
     'links': links.map((e) => e.toMap()).toList(),
     'projectImages': projectImages,
     'projectIcons': projectIcons,
+    'isVertical': isVertical,
   };
 
   ProjectModel copyWith({
@@ -69,6 +73,7 @@ class ProjectModel extends ProjectEntity {
     List<SocialItem>? links,
     List<String>? projectImages,
     List<String>? projectIcons,
+    bool? isVertical,
   }) {
     return ProjectModel(
       id: id ?? this.id,
@@ -78,6 +83,7 @@ class ProjectModel extends ProjectEntity {
       links: links ?? this.links,
       projectImages: projectImages ?? this.projectImages,
       projectIcons: projectIcons ?? this.projectIcons,
+      isVertical: isVertical ?? this.isVertical,
     );
   }
 }

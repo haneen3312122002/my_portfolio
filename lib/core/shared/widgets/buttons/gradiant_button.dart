@@ -5,15 +5,16 @@ class GradientButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget child;
   final BorderRadius borderRadius;
-  final EdgeInsets padding;
 
   const GradientButton({
     super.key,
     required this.onPressed,
     required this.child,
     this.borderRadius = const BorderRadius.all(Radius.circular(14)),
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
   });
+
+  static const _minSize = Size(160, 46);
+  static const _padding = EdgeInsets.symmetric(horizontal: 16, vertical: 10);
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +26,21 @@ class GradientButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          maximumSize: Size(200, 40),
+          minimumSize: _minSize,
+          padding: _padding,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.compact,
+
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          padding: padding,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          elevation: 0, // ✅ حتى ما يبين اختلاف عن الـ outline
+
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius,
+            side: BorderSide.none, // ✅ يمنع بوردر الثيم
+          ),
+
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
         ),
         child: child,
       ),

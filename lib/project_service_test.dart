@@ -128,6 +128,7 @@ class _ProjectsDebugPanelState extends ConsumerState<ProjectsDebugPanel> {
                   links: const [],
                   projectImages: const [],
                   projectIcons: const [],
+                  isVertical: true,
                 );
 
                 final id = await ref

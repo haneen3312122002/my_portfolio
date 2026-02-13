@@ -1,42 +1,60 @@
 import 'package:device_frame/device_frame.dart';
 import 'package:flutter/material.dart';
+import 'package:my_portfolio/core/theme/app_colors.dart';
 
 class PhoneFrame extends StatelessWidget {
   final String imageUrl;
   final double scale;
   final double tilt;
+  final Orientation orientation;
+
+  final Gradient? borderGradient; // 👈 جديد
 
   const PhoneFrame({
+    super.key,
     required this.imageUrl,
     required this.scale,
     required this.tilt,
+    required this.orientation,
+    this.borderGradient,
   });
+
+  static const Color primaryPurple = AppColors.primaryPurple;
+  static const Color primaryBlue = AppColors.primaryBlue;
 
   @override
   Widget build(BuildContext context) {
     final device = Devices.ios.iPhone13;
 
+    Widget frame = DeviceFrame(
+      device: device,
+      isFrameVisible: true,
+      orientation: orientation,
+      screen: PhoneScreen(imageUrl: imageUrl),
+    );
+
+    // 🎨 If gradient provided → wrap with border
+    if (borderGradient != null) {
+      frame = Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(26),
+          gradient: borderGradient,
+        ),
+        child: frame,
+      );
+    }
+
     return Transform.rotate(
       angle: tilt,
-      child: Transform.scale(
-        scale: scale,
-        child: AspectRatio(
-          aspectRatio: 9 / 18,
-          child: DeviceFrame(
-            device: device,
-            isFrameVisible: true,
-            orientation: Orientation.portrait,
-            screen: PhoneScreen(imageUrl: imageUrl),
-          ),
-        ),
-      ),
+      child: Transform.scale(scale: scale, child: frame),
     );
   }
 }
 
 class PhoneScreen extends StatelessWidget {
   final String imageUrl;
-  const PhoneScreen({required this.imageUrl});
+  const PhoneScreen({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
