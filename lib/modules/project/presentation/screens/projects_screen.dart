@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:my_portfolio/core/shared/errors/error_mapper.dart';
 import 'package:my_portfolio/core/shared/widgets/lists/app_responsive_grid.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/subtitle_text.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
@@ -23,25 +23,22 @@ class ProjectsGridSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(projectsProvider);
     final isEdit = ref.watch(isEditProvider);
+    final isEditVm = ref.read(isEditProvider.notifier);
+    final editingProject = ref.watch(editingProjectProvider);
+    final editingProjectVm = ref.read(editingProjectProvider.notifier);
 
     return async.when(
       loading: () => const Padding(
         padding: EdgeInsets.all(24),
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (e, _) => Center(
-        child: Column(
-          children: [
-            Text('Error: $e'),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () => ref.read(projectsProvider.notifier).refresh(),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      ),
+      error: (e, _) {
+        final msg = AppErrorMapper.map(e);
+        return Center(child: Text('${msg.title}\n${msg.message}'));
+      },
+
       data: (projects) {
+        //to decide to view all projects / first X projects
         final list = (maxItems <= 0)
             ? projects
             : projects.take(maxItems).toList();
@@ -55,16 +52,16 @@ class ProjectsGridSection extends ConsumerWidget {
                   const Expanded(child: AppSubtitle('My Projects')),
                   const SizedBox(width: 12),
 
-                  // ✅ Add button (يفضل يظهر لما مش edit)
+                  //  Add button
                   if (isEdit)
                     ElevatedButton.icon(
                       icon: const Icon(Icons.add),
                       label: const Text('Add Project'),
                       onPressed: () {
-                        ref.read(isEditProvider.notifier).state = false;
-
-                        // ✅ add mode: clear editing entity
-                        ref.read(editingProjectProvider.notifier).state = null;
+                        //no access for edit
+                        isEditVm.state = false;
+                        //  add mode: clear editing entity
+                        editingProjectVm.state = null;
 
                         showDialog(
                           context: context,

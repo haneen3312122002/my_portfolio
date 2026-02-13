@@ -57,17 +57,41 @@ class SkillsSection extends ConsumerWidget {
                 const Text('No skills yet. Add your first one 👇'),
 
               if (skills.isNotEmpty)
-                AppResponsiveGrid(
-                  itemCount: skills.length,
-                  mobile: 1,
-                  tablet: 2,
-                  desktop: 3,
-                  childAspectRatio: 2.2, // قريب من المربع (مش مربع)
-                  gap: 16,
-                  runGap: 1,
-                  itemBuilder: (context, index) =>
-                      SkillItem(replayTick: tick, skill: skills[index]),
-                ),
+                if (skills.isNotEmpty)
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final w = constraints.maxWidth;
+
+                      double gap;
+                      double runGap;
+                      final ratio = w < 650 ? 3.7 : (w < 1100 ? 2.3 : 3.2);
+                      if (w < 650) {
+                        // 📱 Mobile
+                        gap = 1;
+                        runGap = 1;
+                      } else if (w < 1100) {
+                        // 💻 Tablet
+                        gap = 12;
+                        runGap = 10;
+                      } else {
+                        // 🖥 Desktop
+                        gap = 16;
+                        runGap = 12;
+                      }
+
+                      return AppResponsiveGrid(
+                        itemCount: skills.length,
+                        mobile: 1,
+                        tablet: 2,
+                        desktop: 3,
+                        childAspectRatio: ratio,
+                        gap: gap,
+                        runGap: runGap,
+                        itemBuilder: (context, index) =>
+                            SkillItem(replayTick: tick, skill: skills[index]),
+                      );
+                    },
+                  ),
             ],
           ),
         );

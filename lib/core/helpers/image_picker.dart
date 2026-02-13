@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_portfolio/modules/profile/presentation/providers/state_providers.dart';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
+import 'package:cross_file/cross_file.dart';
+import 'package:image_picker/image_picker.dart' as ip;
 
 void setDraft(WidgetRef ref, String key, dynamic value) {
   final draft = {...ref.read(profileDraftProvider)};
@@ -40,4 +42,18 @@ class PickedImageResult {
     required this.name,
     required this.extension,
   });
+}
+//............
+
+Future<XFile?> pickOneImageXFile(ip.ImagePicker picker) async {
+  final file = await picker.pickImage(
+    source: ip.ImageSource.gallery,
+    imageQuality: 85,
+  );
+  return file == null ? null : XFile(file.path);
+}
+
+Future<List<XFile>> pickManyImagesXFile(ip.ImagePicker picker) async {
+  final files = await picker.pickMultiImage(imageQuality: 85);
+  return files.map((f) => XFile(f.path)).toList();
 }

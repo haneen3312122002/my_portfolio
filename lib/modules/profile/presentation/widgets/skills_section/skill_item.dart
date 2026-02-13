@@ -104,15 +104,16 @@ class SkillItem extends ConsumerWidget {
             value: progress, // مثلاً 0.7
             color: c, // لون فاقع للتجربة
             // أعلى شوي
-            duration: const Duration(seconds: 5), // ⏱️ بطييييء
+            duration: const Duration(seconds: 1), // ⏱️ بطييييء
             curve: Curves.linear,
             // ✅ يبدأ بعد ما يبان السكشن
           ),
 
           SizedBox(height: 6),
-          if (skill.subSkills.isNotEmpty)
+          if (skill.subSkills.isNotEmpty) ...[
+            const SizedBox(height: 6),
             SkillsChips(skills: skill.subSkills, chipColor: c),
-          ...[const SizedBox(height: 6)],
+          ],
         ],
       ),
     );
