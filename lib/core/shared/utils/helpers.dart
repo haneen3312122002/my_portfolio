@@ -4,17 +4,36 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-Future<void> openLinkSmart(String rawUrl, {BuildContext? context}) async {
-  String url = rawUrl.trim();
+Future<void> openLinkSmart(
+  String rawUrl, {
+  BuildContext? context,
+  String? subject,
+  String? body,
+}) async {
+  var url = rawUrl.trim();
   if (url.isEmpty) return;
 
-  // ✅ لو المستخدم حاط رابط بدون scheme
-  // مثال: github.com/user أو www.google.com
-  final hasScheme = RegExp(r'^[a-zA-Z][a-zA-Z0-9+\-.]*:').hasMatch(url);
-  if (!hasScheme) {
-    // لو بدأ بـ www أو دومين، خليه https
-    url = 'https://$url';
+  // ✅ إذا المستخدم كاتب ايميل فقط بدون mailto
+  final isEmailOnly = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(url);
+  if (isEmailOnly) {
+    final mailUri = Uri(
+      scheme: 'mailto',
+      path: url,
+      queryParameters: {
+        if (subject != null && subject.trim().isNotEmpty) 'subject': subject,
+        if (body != null && body.trim().isNotEmpty) 'body': body,
+      },
+    );
+    final ok = await launchUrl(mailUri, mode: LaunchMode.externalApplication);
+    if (!ok) {
+      await _copyToClipboard(url, context: context, msg: 'Email copied.');
+    }
+    return;
   }
+
+  // ✅ إذا الرابط بدون scheme (مثال github.com)
+  final hasScheme = RegExp(r'^[a-zA-Z][a-zA-Z0-9+\-.]*:').hasMatch(url);
+  if (!hasScheme) url = 'https://$url';
 
   Uri uri;
   try {
@@ -24,59 +43,32 @@ Future<void> openLinkSmart(String rawUrl, {BuildContext? context}) async {
     return;
   }
 
-  // ✅ اختيار المود حسب النوع والمنصة
-  LaunchMode mode;
-
-  // mailto/tel/sms لازم external
-  if (uri.scheme == 'mailto' || uri.scheme == 'tel' || uri.scheme == 'sms') {
-    mode = LaunchMode.externalApplication;
-  } else {
-    // روابط عادية: على الويب افتح تبويب/نافذة جديدة، على الموبايل افتح خارجي
-    mode = kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication;
+  // ✅ لو mailto وبدك تضيف subject/body (حتى لو كان الرابط mailto جاهز)
+  if (uri.scheme == 'mailto' && (subject != null || body != null)) {
+    uri = Uri(
+      scheme: 'mailto',
+      path: uri.path,
+      queryParameters: {
+        ...uri.queryParameters,
+        if (subject != null && subject.trim().isNotEmpty) 'subject': subject,
+        if (body != null && body.trim().isNotEmpty) 'body': body,
+      },
+    );
   }
 
-  // ✅ على الويب: حاول launch مباشرة (canLaunchUrl أحياناً يعطي false غلط)
-  if (kIsWeb) {
-    try {
-      final ok = await launchUrl(uri, mode: mode);
-      if (!ok) {
-        await _copyToClipboard(
-          url,
-          context: context,
-          msg: 'Could not open. Copied.',
-        );
-      }
-      return;
-    } catch (_) {
-      await _copyToClipboard(
-        url,
-        context: context,
-        msg: 'Could not open. Copied.',
-      );
-      return;
-    }
-  }
+  final mode =
+      (uri.scheme == 'mailto' || uri.scheme == 'tel' || uri.scheme == 'sms')
+      ? LaunchMode.externalApplication
+      : (kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication);
 
-  // ✅ على Android/iOS/Desktop: جرّب canLaunch ثم launch
   try {
-    final can = await canLaunchUrl(uri);
-    if (can) {
-      final ok = await launchUrl(uri, mode: mode);
-      if (!ok) {
-        await _copyToClipboard(
-          url,
-          context: context,
-          msg: 'Could not open. Copied.',
-        );
-      }
-    } else {
-      // fallback خاص بالـ mailto: انسخ الإيميل فقط
+    final ok = await launchUrl(uri, mode: mode);
+    if (!ok) {
       if (uri.scheme == 'mailto') {
-        final email = uri.path;
         await _copyToClipboard(
-          email,
+          uri.path,
           context: context,
-          msg: 'Email not supported. Copied.',
+          msg: 'Email copied.',
         );
       } else {
         await _copyToClipboard(
@@ -87,11 +79,15 @@ Future<void> openLinkSmart(String rawUrl, {BuildContext? context}) async {
       }
     }
   } catch (_) {
-    await _copyToClipboard(
-      url,
-      context: context,
-      msg: 'Could not open. Copied.',
-    );
+    if (uri.scheme == 'mailto') {
+      await _copyToClipboard(uri.path, context: context, msg: 'Email copied.');
+    } else {
+      await _copyToClipboard(
+        url,
+        context: context,
+        msg: 'Could not open. Copied.',
+      );
+    }
   }
 }
 

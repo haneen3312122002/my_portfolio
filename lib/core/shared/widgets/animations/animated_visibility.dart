@@ -11,6 +11,9 @@ class AnimateOnVisible extends StatefulWidget {
     this.curve = Curves.easeOutCubic,
     this.visibleFraction = 0.35,
     this.cooldown = const Duration(milliseconds: 700),
+    this.replay = true,
+    this.protectFocus = true,
+    this.protectKeyboard = true,
     this.onReplay,
   });
 
@@ -18,13 +21,14 @@ class AnimateOnVisible extends StatefulWidget {
   final Duration duration;
   final double offsetY;
   final Curve curve;
-  final VoidCallback? onReplay;
-
-  /// لازم هذا الجزء من السكشن يبان عشان نبدأ الأنيميشن
   final double visibleFraction;
-
-  /// يمنع التكرار السريع
   final Duration cooldown;
+
+  final bool replay;
+  final bool protectFocus;
+  final bool protectKeyboard;
+
+  final VoidCallback? onReplay;
 
   @override
   State<AnimateOnVisible> createState() => _AnimateOnVisibleState();
@@ -36,8 +40,16 @@ class _AnimateOnVisibleState extends State<AnimateOnVisible>
   late final Animation<double> _fade;
   late final Animation<double> _slide;
 
+  final FocusScopeNode _scopeNode = FocusScopeNode(
+    debugLabel: 'AnimateOnVisible',
+  );
+
+  // ✅ أهم سطر: key ثابت ما بيتغير مع rebuild
+  final Key _vdKey = UniqueKey();
+
   bool _cooling = false;
   Timer? _timer;
+  bool _playedOnce = false;
 
   @override
   void initState() {
@@ -50,7 +62,6 @@ class _AnimateOnVisibleState extends State<AnimateOnVisible>
       end: 0,
     ).animate(CurvedAnimation(parent: _c, curve: widget.curve));
 
-    // ✅ مهم: يبدأ مخفي
     _c.value = 0;
   }
 
@@ -58,6 +69,7 @@ class _AnimateOnVisibleState extends State<AnimateOnVisible>
   void dispose() {
     _timer?.cancel();
     _c.dispose();
+    _scopeNode.dispose();
     super.dispose();
   }
 
@@ -69,43 +81,66 @@ class _AnimateOnVisibleState extends State<AnimateOnVisible>
 
   void _playFromStart() {
     _c.stop();
-    _c.reset(); // ✅ يخليه مخفي فورًا
+    _c.reset();
     _c.forward();
+  }
+
+  bool get _hasFocusInside => widget.protectFocus && _scopeNode.hasFocus;
+
+  bool _keyboardVisible(BuildContext context) {
+    if (!widget.protectKeyboard) return false;
+    return MediaQuery.viewInsetsOf(context).bottom > 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: ValueKey('vis_${widget.key ?? widget.hashCode}'),
-      onVisibilityChanged: (info) {
-        final f = info.visibleFraction;
+    return FocusScope(
+      node: _scopeNode,
+      child: VisibilityDetector(
+        key: _vdKey, // ✅ ثابت
+        onVisibilityChanged: (info) {
+          final f = info.visibleFraction;
 
-        // ✅ إذا طلع تقريبًا من الشاشة: رجّعه مخفي عشان المرة الجاية يعيد
-        if (f <= 0.02) {
-          _c.stop();
-          _c.reset();
-          return;
-        }
+          // ✅ إذا الكيبورد ظاهر أو في فوكس جوّا: لا تسوي أي reset/replay
+          if (_keyboardVisible(context)) return;
+          if (_hasFocusInside) return;
 
-        // ✅ إذا دخل بشكل كافي: شغّل الأنيميشن من الصفر (مرة، مع cooldown)
-        if (f >= widget.visibleFraction && !_cooling && _c.value == 0) {
-          _playFromStart();
-          widget.onReplay?.call();
-          _startCooldown();
-        }
-      },
-      child: AnimatedBuilder(
-        animation: _c,
-        child: widget.child,
-        builder: (context, child) {
-          return Opacity(
-            opacity: _fade.value, // 0 بالبداية
-            child: Transform.translate(
-              offset: Offset(0, _slide.value),
-              child: child,
-            ),
-          );
+          // ✅ replay=false: شغله مرة وحدة وخلاص
+          if (!widget.replay) {
+            if (!_playedOnce && f >= widget.visibleFraction) {
+              _playedOnce = true;
+              _c.forward();
+              widget.onReplay?.call();
+            }
+            return;
+          }
+
+          // ✅ replay=true: يرجع يخفي نفسه فقط إذا طلع فعلاً من الشاشة
+          if (f <= 0.02) {
+            _c.stop();
+            _c.reset();
+            return;
+          }
+
+          if (f >= widget.visibleFraction && !_cooling && _c.value == 0) {
+            _playFromStart();
+            widget.onReplay?.call();
+            _startCooldown();
+          }
         },
+        child: AnimatedBuilder(
+          animation: _c,
+          child: widget.child,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _fade.value,
+              child: Transform.translate(
+                offset: Offset(0, _slide.value),
+                child: child,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -17,6 +17,69 @@ class AppTheme {
     return base.copyWith(
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.scaffold,
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStateProperty.all(AppColors.card),
+          surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
+          elevation: WidgetStateProperty.all(0),
+          shadowColor: WidgetStateProperty.all(Colors.transparent),
+
+          // نفس rounded تبع الـ dialogs/inputs
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+              side: const BorderSide(color: AppColors.divider, width: 1),
+            ),
+          ),
+
+          // padding للـ popup نفسه
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 6),
+          ),
+        ),
+      ),
+
+      // ✅ DropdownMenu (Material 3) theme (optional but nice if you use DropdownMenu widget)
+      dropdownMenuTheme: DropdownMenuThemeData(
+        textStyle: AppTextStyles.body.copyWith(fontSize: 14.5),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.card,
+          hintStyle: const TextStyle(color: AppColors.disabled),
+          labelStyle: const TextStyle(color: AppColors.body),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.body, width: 1.5),
+          ),
+        ),
+        menuStyle: MenuStyle(
+          backgroundColor: WidgetStateProperty.all(AppColors.card),
+          surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
+          elevation: WidgetStateProperty.all(0),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+              side: const BorderSide(color: AppColors.divider, width: 1),
+            ),
+          ),
+        ),
+      ),
+
+      // ✅ Item style inside dropdown popup
+      listTileTheme: ListTileThemeData(
+        dense: true,
+        iconColor: AppColors.body,
+        textColor: AppColors.body,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+
+      // ✅ Better default icon colors for dropdown arrow etc.
+      iconTheme: const IconThemeData(color: AppColors.body),
 
       // Divider
       dividerTheme: const DividerThemeData(
