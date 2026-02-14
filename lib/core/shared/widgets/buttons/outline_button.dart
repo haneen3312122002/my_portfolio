@@ -14,7 +14,7 @@ class AppOutlineButton extends StatelessWidget {
   final IconData? icon;
   final Widget? child;
 
-  static const _minSize = Size(160, 46);
+  static const _minSize = Size(0, 46); // ✅ عرض مرن
   static const _padding = EdgeInsets.symmetric(horizontal: 16, vertical: 10);
 
   @override
@@ -27,10 +27,12 @@ class AppOutlineButton extends StatelessWidget {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.compact,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        // لو حسيتي لسه أكبر بصريًا بسبب البوردر، خلي البوردر أنحف:
-        //   side: const BorderSide(width: 1),
       ),
-      child: child ?? Text(title ?? ''),
+      child: FittedBox(
+        // ✅ يمنع overflow
+        fit: BoxFit.scaleDown,
+        child: child ?? Text(title ?? ''),
+      ),
     );
   }
 }

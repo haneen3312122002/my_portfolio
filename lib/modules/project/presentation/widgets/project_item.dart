@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_portfolio/core/shared/utils/helpers.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/gradiant_button.dart';
 import 'package:my_portfolio/core/shared/widgets/buttons/outline_button.dart';
 import 'package:my_portfolio/core/shared/widgets/texts/body_text.dart';
@@ -28,6 +29,16 @@ class ProjectGridItem extends ConsumerWidget {
     final borderColor = isDark
         ? const Color(0x33FFFFFF)
         : const Color(0x22000000);
+
+    final projectLinks = project.links;
+
+    final firstLink = projectLinks.isNotEmpty ? projectLinks[0] : null;
+    final firstUrl = firstLink?.url ?? '';
+    final firstName = firstLink?.name ?? '';
+
+    final secondLink = projectLinks.length > 1 ? projectLinks[1] : null;
+    final secondUrl = secondLink?.url ?? '';
+    final secondName = secondLink?.name ?? '';
 
     return Material(
       color: Colors.transparent,
@@ -75,7 +86,6 @@ class ProjectGridItem extends ConsumerWidget {
                   },
                 ),
 
-                // const SizedBox(height: 2),
                 AppBodyText(
                   project.description,
                   maxLines: 3,
@@ -117,25 +127,69 @@ class ProjectGridItem extends ConsumerWidget {
                   ),
                 ] else ...[
                   const SizedBox(height: 22),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GradientButton(
-                          onPressed: null, // رح تفعليه بعدين
-                          child: const Text(
-                            'View Project',
-                            style: TextStyle(color: Colors.white),
-                          ),
+
+                  // ✅ only change: buttons responsive by SCREEN width (not card width)
+                  Builder(
+                    builder: (context) {
+                      final screenW = MediaQuery.sizeOf(context).width;
+                      final isSmallScreen =
+                          screenW < 650; // نفس breakpoint عندك
+
+                      final hasFirst = firstUrl.trim().isNotEmpty;
+                      final hasSecond = secondUrl.trim().isNotEmpty;
+
+                      final primaryBtn = GradientButton(
+                        onPressed: hasFirst
+                            ? () => openLinkSmart(firstUrl)
+                            : null,
+                        child: Text(
+                          firstName.isNotEmpty ? firstName : 'Open',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          style: const TextStyle(color: Colors.white),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: AppOutlineButton(
-                          onPressed: null, // رح تفعليه بعدين
-                          child: const AppBodyText('Details'),
+                      );
+
+                      final secondaryBtn = AppOutlineButton(
+                        onPressed: hasSecond
+                            ? () => openLinkSmart(secondUrl)
+                            : null,
+                        child: Text(
+                          secondName.isNotEmpty ? secondName : 'Details',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
-                      ),
-                    ],
+                      );
+
+                      // ✅ Mobile: تحت بعض
+                      if (isSmallScreen) {
+                        return Column(
+                          children: [
+                            SizedBox(width: double.infinity, child: primaryBtn),
+                            if (hasSecond) ...[
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: secondaryBtn,
+                              ),
+                            ],
+                          ],
+                        );
+                      }
+
+                      // ✅ Web/Desktop: جنب بعض
+                      return Row(
+                        children: [
+                          Expanded(child: primaryBtn),
+                          if (hasSecond) ...[
+                            const SizedBox(width: 10),
+                            Expanded(child: secondaryBtn),
+                          ],
+                        ],
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 16),

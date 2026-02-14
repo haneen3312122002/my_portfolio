@@ -49,7 +49,7 @@ class ProjectsGridSection extends ConsumerWidget {
             if (showTitle) ...[
               Row(
                 children: [
-                  const Expanded(child: AppSubtitle('My Projects')),
+                  const Expanded(child: AppSubtitle('Featured Projects')),
                   const SizedBox(width: 12),
 
                   //  Add button

@@ -36,7 +36,7 @@ class SkillsSection extends ConsumerWidget {
                 duration: const Duration(milliseconds: 1500),
                 child: Row(
                   children: [
-                    const Expanded(child: AppSubtitle('My Top Skills')),
+                    const Expanded(child: AppSubtitle('What I Work With')),
                     if (isEdit)
                       ElevatedButton.icon(
                         onPressed: () async {
@@ -51,7 +51,7 @@ class SkillsSection extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
               if (skills.isEmpty && isEdit)
                 const Text('No skills yet. Add your first one 👇'),

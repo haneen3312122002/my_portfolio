@@ -13,7 +13,7 @@ class GradientButton extends StatelessWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(14)),
   });
 
-  static const _minSize = Size(160, 46);
+  static const _minSize = Size(0, 46); // ✅ العرض صار مرن
   static const _padding = EdgeInsets.symmetric(horizontal: 16, vertical: 10);
 
   @override
@@ -30,19 +30,20 @@ class GradientButton extends StatelessWidget {
           padding: _padding,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           visualDensity: VisualDensity.compact,
-
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          elevation: 0, // ✅ حتى ما يبين اختلاف عن الـ outline
-
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius,
-            side: BorderSide.none, // ✅ يمنع بوردر الثيم
+            side: BorderSide.none,
           ),
-
           textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
         ),
-        child: child,
+        child: FittedBox(
+          // ✅ يمنع كسر النص
+          fit: BoxFit.scaleDown,
+          child: child,
+        ),
       ),
     );
   }
